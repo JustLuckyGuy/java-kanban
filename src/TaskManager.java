@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -6,6 +5,7 @@ public class TaskManager {
     private static int counterTask = 1;
     private static final HashMap<Integer, Task> taskManager = new HashMap<>();
 
+    //Методы для Task
     //d
     public static void addTask(Task task, String description){
         for(Integer id : taskManager.keySet()){
@@ -29,7 +29,7 @@ public class TaskManager {
         taskManager.remove(idTask);
     }
 
-    //c
+    //с
     public static Task getTaskById(int idTask){
         if(taskManager.containsKey(idTask)){
             System.out.println("Нашли задачу №" + idTask);
@@ -54,4 +54,6 @@ public class TaskManager {
         }
         return result;
     }
+
+    //Методы для Epic
 }
