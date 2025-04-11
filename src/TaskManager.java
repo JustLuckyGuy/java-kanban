@@ -1,45 +1,57 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
+
 
 public class TaskManager {
-    private static int idTasks = 1;
+
     private static final HashMap<Integer, Task> tm = new HashMap<>();
 
-    public static void addTasks(Scanner in){
-        System.out.println("Вводите задачи, разделяя символом переноса строки (enter). Для завершения ввода введите пустую строку");
-        while (true) {
-            String task = in.nextLine();
+    //d
+    public static void addTask(Task task){
+        tm.put(task.getIdTask(), task);
+    }
 
-            if(task.isEmpty()){
-                return;
-            }
-            tm.put(idTasks, new Task(task));
-            addDescription(idTasks, in);
-            idTasks++;
+    //b
+    public static void removeAllTasks(){
+        tm.clear();
+    }
 
+    //f
+    public static void removeTaskById(int idTask){
+        tm.remove(idTask);
+    }
+
+    //c
+    public static Task getTaskById(int idTask){
+        if(tm.containsKey(idTask)){
+            return tm.get(idTask);
         }
+        return null;
+    }
+
+    //e
+    public static void updateTask(int idTask, Task newTask){
+        tm.replace(idTask, tm.get(idTask), newTask);
 
     }
 
-    public static void addDescription(int idTasks, Scanner in){
-        Task newDescriptionForTask = tm.get(idTasks);
-        ArrayList<String> newDescription = new ArrayList<>();
-        System.out.println("Вводите описания вашей задачи");
-        while (true){
-            String description = in.nextLine();
-            if(description.isEmpty()){
-                break;
-            }
-            newDescription.add(description);
-        }
-        newDescriptionForTask.setDescription(newDescription);
+    public static void addDescription(int idTask, String nameDescription){
+        Task task = tm.get(idTask);
+
+        ArrayList<String> newDescription = task.getDescription();
+        newDescription.add(nameDescription);
+
+        task.setDescription(newDescription);
+
     }
 
-    public static void getTask(){
+    //a
+    public static StringBuilder getTasks(){
+        StringBuilder result = new StringBuilder();
         for(Integer i : tm.keySet()){
-            System.out.println("Задача №"+ i + ":\n" + tm.get(i));
+            result.append("Задача №").append(tm.get(i).getIdTask()).append("\n").append(tm.get(i));
         }
+        return result;
     }
 
 
