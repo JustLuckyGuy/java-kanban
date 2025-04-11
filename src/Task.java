@@ -3,41 +3,42 @@ import java.util.Objects;
 
 public class Task {
     private final String nameTask;
-    private static int counter = 1;
-    private int idTask = 0;
-    private ArrayList<String> description = new ArrayList<>();
-    private final StatusTask statusTask;
+    private String description;
+    private StatusTask statusTask;
 
     public Task(String nameTask) {
         this.nameTask = nameTask;
         statusTask = StatusTask.NEW;
-        idTask = counter;
-        counter++;
     }
 
 
-    public ArrayList<String> getDescription() {
-        return description;
+    public void setDescription(String description) {
+        this.description = Objects.requireNonNullElse(description, "");
+
     }
 
-    public void setDescription(ArrayList<String> description) {
-        this.description = description;
+    public void setStatusTask(StatusTask statusTask) {
+        this.statusTask = statusTask;
     }
 
-    public int getIdTask() {
-        return idTask;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Task task)) return false;
+        return Objects.equals(nameTask, task.nameTask);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(nameTask);
+    }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("   Название: " + nameTask + "\n   Описание: ");
-        if(description.isEmpty()) {
+        if (description.isEmpty()) {
             result = new StringBuilder("   Название: " + nameTask);
         } else {
-            for (String res : description){
-                result.append("\n").append(" ".repeat(5)).append(res);
-            }
+            result.append(description);
         }
         return result + "\n   Статус: " + statusTask + "\n";
     }
