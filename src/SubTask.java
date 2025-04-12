@@ -1,14 +1,14 @@
-import java.util.ArrayList;
 
 public class SubTask extends Task {
     //Поле для связывания с классом Epic
-    private int idEpic;
+    private final int idEpic;
 
     //Конструктор SubTask
     public SubTask(String nameSubTask, int idEpic) {
         super(nameSubTask);
         this.idEpic = idEpic;
     }
+
     //Создал геттер
     public int getIdEpic() {
         return idEpic;

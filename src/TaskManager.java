@@ -32,6 +32,7 @@ public class TaskManager {
         task.setStatusTask(statusTask);
         taskManager.put(task.getId(), task);
     }
+
     public static void updateTask(Task task, StatusTask statusTask) {
         task.setStatusTask(statusTask);
         taskManager.put(task.getId(), task);
@@ -116,7 +117,7 @@ public class TaskManager {
 
     //Метод, который обновляет Эпик
     public static void updateEpic(Epic oldEpic, Epic epic) {
-        epicManager.put(oldEpic.getId(),epic);
+        epicManager.put(oldEpic.getId(), epic);
         epic.checkStatus();
     }
 

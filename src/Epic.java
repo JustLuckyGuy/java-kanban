@@ -14,6 +14,7 @@ public class Epic extends Task {
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask);
     }
+
     //Создал геттер
     public ArrayList<SubTask> getSubTask() {
         return subTasks;
