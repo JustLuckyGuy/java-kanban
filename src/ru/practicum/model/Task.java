@@ -15,12 +15,6 @@ public class Task {
         this.description = description;
     }
 
-    //Конструктор Task для Epic, так как эпику не нужно описание в задаче указано, что у эпика есть только подзадачи.
-    public Task(String nameTask, StatusTask statusTask) {
-        this.nameTask = nameTask;
-        this.statusTask = statusTask;
-    }
-
     public int getId() {
         return id;
     }
@@ -39,6 +33,10 @@ public class Task {
 
     public void setNameTask(String nameTask) {
         this.nameTask = nameTask;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     //Переопределил методы equals и hashcode

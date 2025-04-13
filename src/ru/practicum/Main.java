@@ -13,8 +13,8 @@ public class Main {
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
         taskManager.createTask(task1);
         taskManager.createTask(task2);
-        Epic epic1 = new Epic("Очень большая и важная задача", StatusTask.NEW);
-        Epic epic2 = new Epic("Менее большая задача", StatusTask.NEW);
+        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
         SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
@@ -29,12 +29,18 @@ public class Main {
         System.out.println("Список Эпиков:\n" + taskManager.getEpic());
 
         //Обновляю Задачи и Эпики и вывожу их на консоль
-        task1 = new Task("Посмотреть фильм", "Взять с собой собаку", StatusTask.DONE);
-        taskManager.updateTask(taskManager.getTaskById(1).getId(), task1);
-        taskManager.updateEpic(epic1.getId(), "Не очень большая задача");
-        subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.IN_PROGRESS, epic1.getId());
-        taskManager.updateSubTask(taskManager.getSubTaskById(2).getId(), subTask2);
-
+        task1.setNameTask("Сходить на пробежку");
+        task1.setStatusTask(StatusTask.IN_PROGRESS);
+        task2.setDescription("Узнать все ли пойдут смотреть фильм");
+        taskManager.updateTask(task1);
+        taskManager.updateTask(task2);
+        subTask1.setNameTask("Узнать у эксперта, как составлять план");
+        subTask2.setStatusTask(StatusTask.DONE);
+        subTask3.setNameTask("Реализовать план");
+        taskManager.updateSubTask(subTask1);
+        taskManager.updateSubTask(subTask2);
+        taskManager.updateSubTask(subTask3);
+        taskManager.updateEpic(epic1, "Супер-пупер прям мега большая задача", "Ее нужно срочно решить!!!");
         System.out.println("Список задач:\n" + taskManager.getTasks());
         System.out.println("Список Подзадач:\n" + taskManager.getSubTasks());
         System.out.println("Список Эпиков:\n" + taskManager.getEpic());

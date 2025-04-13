@@ -4,21 +4,17 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
     //Поле, которое будет содержать наши подзадачи
-    private ArrayList<SubTask> subTasks;
+    private final ArrayList<SubTask> subTasks;
 
     //Конструктор ru.practicum.model.Epic
-    public Epic(String nameEpic, StatusTask statusTask) {
-        super(nameEpic, statusTask);
+    public Epic(String nameEpic, String description, StatusTask statusTask) {
+        super(nameEpic, description, statusTask);
         this.subTasks = new ArrayList<>();
     }
 
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask);
-    }
-
-    public void setSubTasks(ArrayList<SubTask> subTasks) {
-        this.subTasks = subTasks;
     }
 
     //Создал геттер
@@ -47,10 +43,23 @@ public class Epic extends Task {
         }
     }
 
+    //Добавил метод, который будет добавлять подзадачи в список Эпика, если они не повторяются
+    public void checkSubTask(SubTask subTask) {
+        if (!subTasks.contains(subTask)) {
+            subTasks.add(subTask);
+        }
+    }
+
+    //Добавил метод для удаления Подзадачи из Эпика
+    public void removeSubTask(SubTask subTask) {
+        subTasks.remove(subTask);
+    }
+
     //Переопределил метод toString
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask + "\n");
+        StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask +
+                "\nОписание: " + description + "\n");
         for (SubTask subTask : subTasks) {
             result.append(subTask);
         }
