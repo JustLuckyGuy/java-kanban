@@ -1,18 +1,24 @@
+package ru.practicum.model;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
     //Поле, которое будет содержать наши подзадачи
-    private final ArrayList<SubTask> subTasks;
+    private ArrayList<SubTask> subTasks;
 
-    //Конструктор Epic
-    public Epic(String nameEpic) {
-        super(nameEpic);
+    //Конструктор ru.practicum.model.Epic
+    public Epic(String nameEpic, StatusTask statusTask) {
+        super(nameEpic, statusTask);
         this.subTasks = new ArrayList<>();
     }
 
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask);
+    }
+
+    public void setSubTasks(ArrayList<SubTask> subTasks) {
+        this.subTasks = subTasks;
     }
 
     //Создал геттер
@@ -44,9 +50,9 @@ public class Epic extends Task {
     //Переопределил метод toString
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Название эпика: " + nameTask + "\n");
-        for (int i = 0; i < subTasks.size(); i++) {
-            result.append("  Подзадача № ").append(i + 1).append(subTasks.get(i));
+        StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask + "\n");
+        for (SubTask subTask : subTasks) {
+            result.append(subTask);
         }
         return result + "Статус Эпика: " + statusTask + "\n";
     }
