@@ -10,14 +10,13 @@ import java.util.List;
 
 
 public class TaskManager {
-    private static int counterID = 1;
+    private int counterID = 1;
 
     //Создал 3 структуры HashMap, которые будут хранить наши задачи и Эпики
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
 
-    //Начал с методов для класса ru.practicum.model.Task
     //Метод, который добавляет в структуру HashMap, новый объект класса ru.practicum.model.Task
     public void createTask(Task task) {
         task.setId(counterID);
@@ -55,7 +54,6 @@ public class TaskManager {
         return new ArrayList<>(tasks.values());
     }
 
-    //Методы для ru.practicum.model.SubTask
     //Метод, который добавляет в структуру HashMap, новый объект класса ru.practicum.model.SubTask
     public void createSubTask(SubTask subTask) {
         if (epics.get(subTask.getIdEpic()) == null) {
@@ -86,28 +84,25 @@ public class TaskManager {
         }
         subTasks.put(subTask.getId(), subTask);
         Epic epic = epics.get(subTask.getIdEpic());
-        //Добавил в класс Epic метод, который будет проверять, есть ли похожие подзадачи или нет
-        // и в случае, если таковых нет, то добавит в список подзадач, новую подзадачу
-        epic.checkSubTask(subTask);
+        epic.updateSubTask(subTask);
         epic.checkStatus();
     }
 
     //Метод, который удаляет все Подзадачи из структуры subTasks
     public void removeAllSubTasks() {
-        for (Integer idEpic : epics.keySet()) {
-            epics.get(idEpic).getSubTask().clear();
-            epics.get(idEpic).checkStatus();
+        for (Epic epic : epics.values()){
+            epic.getSubTask().clear();
+            epic.checkStatus();
         }
         subTasks.clear();
     }
 
     //Метод, который удаляет Подзадачу по его идентификатору
     public void removeSubTaskById(int idSubTask) {
-        if (subTasks.get(idSubTask) == null) {
+        if (!subTasks.containsKey(idSubTask)) {
             return;
         }
         Epic epic = epics.get(subTasks.get(idSubTask).getIdEpic());
-        //Добавил в класс Epic метод removeSubTask, который будет удалять подзадачу в нашем эпике
         epic.removeSubTask(subTasks.get(idSubTask));
         subTasks.remove(idSubTask);
         epic.checkStatus();
@@ -119,8 +114,6 @@ public class TaskManager {
         return new ArrayList<>(subTasks.values());
     }
 
-
-    //Методы для ru.practicum.model.Epic
     //Метод, который добавляет в структуру HashMap, новый объект класса ru.practicum.model.Epic
     public void createEpic(Epic epic) {
         epic.setId(counterID);
@@ -134,13 +127,10 @@ public class TaskManager {
     }
 
     //Метод, который обновляет Эпик
-    public void updateEpic(Epic epic, String newNameForEpic, String newDescription) {
+    public void updateEpic(Epic epic) {
         if (epics.get(epic.getId()) == null) {
             return;
         }
-        epic.setNameTask(newNameForEpic);
-        //Добавил сеттер, который будет менять описание Эпика
-        epic.setDescription(newDescription);
         epics.put(epic.getId(), epic);
     }
 
@@ -152,15 +142,12 @@ public class TaskManager {
 
     //Метод, который удаляет Эпик по его идентификатору
     public void removeEpicById(int idEpic) {
-        //Изменил реализацию метода, теперь имея список подзадач выбранного эпика, находит в subTask
-        //похожие и удаляет их
         ArrayList<SubTask> removeSubTasks = epics.get(idEpic).getSubTask();
         for (SubTask subTask : removeSubTasks) {
             if (subTasks.containsValue(subTask)) {
                 subTasks.remove(subTask.getId());
             }
         }
-        // и затем просто удаляет эпик
         epics.remove(idEpic);
     }
 

@@ -43,19 +43,17 @@ public class Epic extends Task {
         }
     }
 
-    //Добавил метод, который будет добавлять подзадачи в список Эпика, если они не повторяются
-    public void checkSubTask(SubTask subTask) {
-        if (!subTasks.contains(subTask)) {
-            subTasks.add(subTask);
-        }
+    //Метод, который обновляет список Подзадач
+    public void updateSubTask(SubTask subTask) {
+        subTasks.remove(subTask);
+        subTasks.add(subTask);
     }
 
-    //Добавил метод для удаления Подзадачи из Эпика
+    //Метод для удаления Подзадачи из Эпика
     public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
     }
 
-    //Переопределил метод toString
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask +

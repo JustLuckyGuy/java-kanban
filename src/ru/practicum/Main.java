@@ -40,7 +40,9 @@ public class Main {
         taskManager.updateSubTask(subTask1);
         taskManager.updateSubTask(subTask2);
         taskManager.updateSubTask(subTask3);
-        taskManager.updateEpic(epic1, "Супер-пупер прям мега большая задача", "Ее нужно срочно решить!!!");
+        epic1.setNameTask("Супер-пупер прям мега большая задача");
+        epic1.setDescription("Ее нужно срочно решить!!!");
+        taskManager.updateEpic(epic1);
         System.out.println("Список задач:\n" + taskManager.getTasks());
         System.out.println("Список Подзадач:\n" + taskManager.getSubTasks());
         System.out.println("Список Эпиков:\n" + taskManager.getEpic());
