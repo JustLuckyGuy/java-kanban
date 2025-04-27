@@ -39,6 +39,14 @@ public class Task {
         this.description = description;
     }
 
+    public String getNameTask() {
+        return nameTask;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     //Переопределил методы equals и hashcode
     @Override
     public boolean equals(Object o) {
