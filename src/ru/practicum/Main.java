@@ -1,5 +1,7 @@
 package ru.practicum;
 
+import ru.practicum.manager.InMemoryTaskManager;
+import ru.practicum.manager.Managers;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.*;
 
@@ -9,22 +11,32 @@ import static ru.practicum.manager.Managers.getDefault;
 public class Main {
 
     public static void main(String[] args) {
-//        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-//        //Создал 2 Задачи, 1 Эпик с 2-мя подзадачами, 1 Эпик с 1 подзадачей
-//        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-//        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
-//        taskManager.createTask(task1);
-//        taskManager.createTask(task2);
-//        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
-//        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
-//        taskManager.createEpic(epic1);
-//        taskManager.createEpic(epic2);
-//        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
-//        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.DONE, epic1.getId());
-//        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
-//        taskManager.createSubTask(subTask1);
-//        taskManager.createSubTask(subTask2);
-//        taskManager.createSubTask(subTask3);
+        TaskManager taskManager = Managers.getDefault();
+        //Создал 2 Задачи, 1 Эпик с 2-мя подзадачами, 1 Эпик с 1 подзадачей
+        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
+        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
+        taskManager.createTask(task1);
+        taskManager.createTask(task2);
+        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
+        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic2);
+        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
+        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.DONE, epic1.getId());
+        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
+        taskManager.createSubTask(subTask1);
+        taskManager.createSubTask(subTask2);
+        taskManager.createSubTask(subTask3);
+        //printAllTasks(taskManager);
+//        System.out.println(subTask1.getId());
+//        SubTask subTask4 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
+//        subTask4.setId(subTask1.getId());
+//        System.out.println(subTask4.getId());
+//
+//        System.out.println(subTask1.equals(subTask4));
+
+
+
 //
 ////        System.out.println("Список задач:\n" + taskManager.getTasks());
 ////        System.out.println("Список Подзадач:\n" + taskManager.getSubTasks());
@@ -70,27 +82,37 @@ public class Main {
 //        taskManager.getEpicById(3);
 //        System.out.println(taskManager.getHistory());
 
-        TaskManager taskManager = getDefault();
-                //Создал 2 Задачи, 1 Эпик с 2-мя подзадачами, 1 Эпик с 1 подзадачей
-        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
-        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
-        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
-        taskManager.createEpic(epic1);
-        taskManager.createEpic(epic2);
-        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
-        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.DONE, epic1.getId());
-        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
-        taskManager.createSubTask(subTask1);
-        taskManager.createSubTask(subTask2);
-        taskManager.createSubTask(subTask3);
-        printAllTasks(taskManager);
-        
+//        TaskManager taskManager = getDefault();
+        //Создал 2 Задачи, 1 Эпик с 2-мя подзадачами, 1 Эпик с 1 подзадачей
+//        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
+//        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
+//        taskManager.createTask(task1);
+//        taskManager.createTask(task2);
+//        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+//        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
+//        taskManager.createEpic(epic1);
+//        taskManager.createEpic(epic2);
+//        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
+//        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.DONE, epic1.getId());
+//        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
+//        taskManager.createSubTask(subTask1);
+//        taskManager.createSubTask(subTask2);
+//        taskManager.createSubTask(subTask3);
+//        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
+//        Task task2 = new Task("Проdadsadгулка", "Взять с dasdasсобой собаку", StatusTask.NEW);
+//        taskManager.createTask(task1);
+//        taskManager.createTask(task2);
+//        task2.setId(task1.getId());
+//        printAllTasks(taskManager);
+//        Epic epic = new Epic("dsa", "dasd", StatusTask.NEW);
+//        Epic epic2 = new Epic("dsad", "dadsaasdas", StatusTask.DONE);
+//
+//
+//
+//    }
 
     }
-    private static void printAllTasks(TaskManager manager) {
+    private static void printAllTasks (TaskManager manager){
         System.out.println("Задачи:");
         for (Task task : manager.getTasks()) {
             System.out.println(task);
@@ -99,16 +121,12 @@ public class Main {
         for (Task epic : manager.getEpic()) {
             System.out.println(epic);
 
-            for (Task task : manager.getAllSubInEpic(manager.getEpicById(epic.getId()).getId())) {
-                System.out.println("--> " + task);
-            }
         }
         System.out.println("Подзадачи:");
         for (Task subtask : manager.getSubTasks()) {
             System.out.println(subtask);
         }
 
-        System.out.println("История:");
-        System.out.println();
+
     }
 }

@@ -41,11 +41,13 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который будет обновлять нашу задачу, немного изменил предложенный вариант
     @Override
     public void updateTask(Task task) {
+
         final Task savedTask = tasks.get(task.getId());
         if (savedTask == null) {
             return;
         }
         tasks.put(task.getId(), task);
+
     }
 
     //Метод, которые удаляет все Задачи из структуры tasks
@@ -195,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(epic.getSubTask());
     }
 
-    public List<Task> returnHistory(){
+    public List<Task> showHistory(){
         return historyManager.getHistory();
     }
 
