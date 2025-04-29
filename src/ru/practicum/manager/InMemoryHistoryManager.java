@@ -18,6 +18,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     //Метод для добавления Задач в список историй
     public <T extends Task> void addHistory(T tasks) {
+        if(tasks == null){
+            return;
+        }
+        
         if (history.size() == 10) {
             history.removeFirst();
         }
