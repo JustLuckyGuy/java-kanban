@@ -5,6 +5,8 @@ import ru.practicum.manager.Managers;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.*;
 
+import java.util.ArrayList;
+
 import static ru.practicum.manager.Managers.getDefault;
 
 
@@ -22,12 +24,28 @@ public class Main {
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
         SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
-        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.DONE, epic1.getId());
+        SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.NEW, epic1.getId());
         SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
         taskManager.createSubTask(subTask1);
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
-        //printAllTasks(taskManager);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        task1.setDescription("Новое описание");
+        taskManager.updateTask(task1);
+        subTask2.setNameTask("Новывыфвфы");
+        taskManager.updateSubTask(subTask2);
+        taskManager.getSubTaskById(6);
+        taskManager.getEpicById(3);
+        taskManager.getTaskById(1);
+
+        System.out.println(taskManager.showHistory());
+//        printAllTasks(taskManager);
+//        subTask1.setStatusTask(StatusTask.DONE);
+//        taskManager.updateSubTask(subTask1);
+//
+//        printAllTasks(taskManager);
 //        System.out.println(subTask1.getId());
 //        SubTask subTask4 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
 //        subTask4.setId(subTask1.getId());

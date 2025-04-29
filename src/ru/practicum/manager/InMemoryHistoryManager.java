@@ -1,5 +1,7 @@
 package ru.practicum.manager;
 
+import ru.practicum.model.Epic;
+import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
 import java.util.ArrayList;
@@ -17,6 +19,35 @@ public class InMemoryHistoryManager implements HistoryManager{
         if(history.size() == 10){
             history.removeFirst();
         }
-        history.add(tasks);
+
+        Task taskCopy;
+
+        if (tasks instanceof SubTask) {
+            SubTask original = (SubTask) tasks;
+            SubTask subTaskCopy = new SubTask(original.getNameTask(), original.getDescription(), original.getStatusTask(), original.getIdEpic());
+            subTaskCopy.setId(original.getId());
+            taskCopy = subTaskCopy;
+
+        } else if (tasks instanceof Epic) {
+            Epic original = (Epic) tasks;
+            Epic epicCopy = new Epic(original.getNameTask(), original.getDescription(), original.getStatusTask());
+            epicCopy.setId(original.getId());
+
+
+            for (SubTask sub : original.getSubTask()) {
+                SubTask subTaskCopy = new SubTask(sub.getNameTask(), sub.getDescription(), sub.getStatusTask(), sub.getIdEpic());
+                subTaskCopy.setId(sub.getId());
+                epicCopy.addSubTask(subTaskCopy);
+            }
+
+            taskCopy = epicCopy;
+
+        } else {
+            taskCopy = new Task(tasks.getNameTask(), tasks.getDescription(), tasks.getStatusTask());
+            taskCopy.setId(tasks.getId());
+        }
+
+        history.add(taskCopy);
+
     }
 }
