@@ -1,13 +1,13 @@
 package ru.practicum.manager;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.practicum.manager.Managers.getDefault;
 
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.model.*;
 
-import java.util.ArrayList;
 
 
 class InMemoryTaskManagerTest {
@@ -23,7 +23,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void before() {
-        tasks = Managers.getDefault();
+        tasks = getDefault();
         task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
         task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
         tasks.createTask(task1);
@@ -45,15 +45,18 @@ class InMemoryTaskManagerTest {
         assertEquals(2, tasks.getTasks().size());
     }
 
+
     @Test
     void shouldReturnTrueWhenEpicIsCreated() {
         assertEquals(2, tasks.getEpic().size());
     }
 
+
     @Test
     void shouldReturnTrueWhenSubTaskIsCreated() {
         assertEquals(3, tasks.getSubTasks().size());
     }
+
 
     @Test
     void getTaskByID() {
@@ -76,7 +79,6 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldReturnTrueWhenTaskIsUpdated() {
         Task olddTask = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        ;
         task1.setNameTask("Новая задача");
         task1.setDescription("Исправить все ошибки");
         tasks.updateTask(task1);
@@ -194,8 +196,8 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnTrueWhenNeededClassIsCreated(){
-        TaskManager taskManager = Managers.getDefault();
+    void shouldReturnTrueWhenNeededClassIsCreated() {
+        TaskManager taskManager = getDefault();
         assertEquals(InMemoryTaskManager.class, taskManager.getClass());
 
         HistoryManager historyManager = Managers.getDefaultHistory();
@@ -203,7 +205,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void checkHistory(){
+    void checkHistory() {
         tasks.getTaskById(1);
         tasks.getTaskById(2);
         tasks.getEpicById(3);
@@ -213,7 +215,6 @@ class InMemoryTaskManagerTest {
         tasks.showHistory();
         assertNotEquals(tasks.showHistory().getFirst(), task1);
     }
-
 
 
 }

@@ -2,10 +2,13 @@ package ru.practicum.manager;
 
 public class Managers {
 
-    public static TaskManager getDefault(){
+    //Метод, который возвращает новый объект InMemoryTaskManager
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
-    public static HistoryManager getDefaultHistory(){
+
+    //Метод, который возвращает новый объект InMemoryHistoryManager
+    public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 }

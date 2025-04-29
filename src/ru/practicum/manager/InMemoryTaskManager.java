@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+import static ru.practicum.manager.Managers.getDefaultHistory;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager = getDefaultHistory();
 
 
     //Метод, который добавляет в структуру HashMap, новый объект класса ru.practicum.model.Task
@@ -197,7 +197,8 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(epic.getSubTask());
     }
 
-    public List<Task> showHistory(){
+    //Метод, который возвращает список истории
+    public List<Task> showHistory() {
         return historyManager.getHistory();
     }
 
