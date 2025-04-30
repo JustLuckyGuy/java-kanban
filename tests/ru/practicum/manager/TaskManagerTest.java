@@ -64,7 +64,7 @@ public class TaskManagerTest {
 
     @Test
     void getSubTaskByID() {
-        SubTask takenSubTusk = tasks.getSubTaskById(3);
+        SubTask takenSubTusk = tasks.getSubTaskById(5);
         assertEquals(takenSubTusk, tasks.getSubTaskById(subTask1.getId()));
     }
 
