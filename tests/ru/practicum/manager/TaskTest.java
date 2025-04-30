@@ -1,6 +1,7 @@
 package ru.practicum.manager;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import ru.practicum.model.*;
 

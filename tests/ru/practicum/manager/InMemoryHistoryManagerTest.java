@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.model.*;
 
 
-
 class InMemoryHistoryManagerTest {
     public HistoryManager tasks = getDefaultHistory();
 
@@ -25,7 +24,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldReturn10WhenTasksMoreThen10(){
+    void shouldReturn10WhenTasksMoreThen10() {
         Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
         Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
