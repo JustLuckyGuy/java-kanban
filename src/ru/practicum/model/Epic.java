@@ -14,6 +14,9 @@ public class Epic extends Task {
 
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
+        if(subTask.getId() == this.getId()){
+            return;
+        }
         subTasks.add(subTask);
     }
 
@@ -24,6 +27,7 @@ public class Epic extends Task {
 
     //Метод, который будет проверять статус Эпика
     public void checkStatus() {
+
         int counterOfNew = 0;
         int counterOfDone = 0;
         for (SubTask s : subTasks) {
