@@ -48,17 +48,15 @@ public class Task {
     }
 
     //Переопределил методы equals и hashcode
-
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Task task)) return false;
-        return id == task.id && Objects.equals(nameTask, task.nameTask) && Objects.equals(description, task.description);
+        return id == task.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nameTask, description, id);
+        return Objects.hashCode(id);
     }
 
     //Переопределение метода toString

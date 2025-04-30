@@ -20,7 +20,7 @@ class InMemoryHistoryManagerTest {
         tasks.addHistory(task2);
         task1.setDescription("Новое описание");
 
-        assertNotEquals(tasks.getHistory().getFirst(), task1);
+        assertNotEquals(tasks.getHistory().getFirst().getDescription(), task1.getDescription());
     }
 
     @Test

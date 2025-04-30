@@ -14,9 +14,6 @@ public class Epic extends Task {
 
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
-        if(subTask.getId() == this.getId()){
-            return;
-        }
         subTasks.add(subTask);
     }
 
