@@ -7,8 +7,8 @@ public class Epic extends Task {
     private final ArrayList<SubTask> subTasks;
 
     //Конструктор ru.practicum.model.Epic
-    public Epic(String nameEpic, String description, StatusTask statusTask) {
-        super(nameEpic, description, statusTask);
+    public Epic(String nameEpic, String description) {
+        super(nameEpic, description);
         this.subTasks = new ArrayList<>();
     }
 
@@ -64,5 +64,6 @@ public class Epic extends Task {
         }
         return result + "Статус Эпика: " + statusTask + "\n";
     }
+
 
 }

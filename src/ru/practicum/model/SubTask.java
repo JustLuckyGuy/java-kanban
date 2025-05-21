@@ -5,8 +5,8 @@ public class SubTask extends Task {
     private final int idEpic;
 
     //Конструктор ru.practicum.model.SubTask
-    public SubTask(String nameSubTask, String description, StatusTask statusTask, int idEpic) {
-        super(nameSubTask, description, statusTask);
+    public SubTask(String nameSubTask, String description, int idEpic) {
+        super(nameSubTask, description);
         this.idEpic = idEpic;
     }
 
@@ -20,4 +20,5 @@ public class SubTask extends Task {
     public String toString() {
         return "Подзадача №" + id + "\n   Название: " + nameTask + "\n   Описание: " + description + "\n   Статус: " + statusTask + "\n";
     }
+
 }

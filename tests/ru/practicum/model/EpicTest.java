@@ -8,8 +8,8 @@ public class EpicTest {
 
     @Test
     void shouldReturnTrueWhenEpicEqualsById() {
-        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
-        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
+        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
         epic1.setId(1);
         epic2.setId(1);
 
@@ -18,7 +18,8 @@ public class EpicTest {
 
     @Test
     void shouldReturnNEWStatusWhenEpicIsWithoutSubTask() {
-        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.DONE);
+        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic.setStatusTask(StatusTask.DONE);
         epic.setId(1);
         epic.checkStatus();
         assertEquals(StatusTask.NEW, epic.getStatusTask());
@@ -26,11 +27,11 @@ public class EpicTest {
 
     @Test
     void shouldReturnINPROGRSSStatusWhenSubtaskIsChangedStatus() {
-        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
         epic.setId(1);
-        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.NEW, epic.getId());
+        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic.getId());
         subTask1.setId(1);
-        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic.getId());
+        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic.getId());
         subTask2.setId(2);
         epic.addSubTask(subTask1);
         epic.addSubTask(subTask2);
@@ -42,10 +43,10 @@ public class EpicTest {
 
     @Test
     void shouldReturnDONEStatusWhenAllSubtaskIsDONE() {
-        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
         epic.setId(1);
-        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.NEW, epic.getId());
-        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic.getId());
+        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic.getId());
+        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic.getId());
         epic.addSubTask(subTask1);
         epic.addSubTask(subTask2);
         subTask1.setStatusTask(StatusTask.DONE);

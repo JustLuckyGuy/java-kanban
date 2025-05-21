@@ -9,7 +9,7 @@ public class TaskTest {
     @Test
     void shouldReturnTrueWhenTasksEqualsById() {
         Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW); // статус может отличаться
+        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
         task1.setId(1);
         task2.setId(1);
 
