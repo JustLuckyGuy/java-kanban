@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static ru.practicum.manager.Managers.getDefault;
 
 public class TaskManagerTest {
-    public static TaskManager tasks;
+    public TaskManager tasks;
     Task task1;
     Task task2;
     Epic epic1;
@@ -25,17 +25,17 @@ public class TaskManagerTest {
     @BeforeEach
     void before() {
         tasks = getDefault();
-        task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
+        task1 = new Task("Прогулка", "Взять с собой собаку");
+        task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
         tasks.createTask(task1);
         tasks.createTask(task2);
-        epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
-        epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
+        epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
         tasks.createEpic(epic1);
         tasks.createEpic(epic2);
-        subTask1 = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
-        subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", StatusTask.NEW, epic1.getId());
-        subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", StatusTask.NEW, epic2.getId());
+        subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
+        subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
+        subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
         tasks.createSubTask(subTask1);
         tasks.createSubTask(subTask2);
         tasks.createSubTask(subTask2);
@@ -85,7 +85,7 @@ public class TaskManagerTest {
 
     @Test
     void shouldReturnTrueWhenSubTaskIsUpdated() {
-        SubTask oldEpic = new SubTask("Разработать план", "Подумать над планом", StatusTask.NEW, epic1.getId());
+        SubTask oldEpic = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
         subTask1.setNameTask("Новая задача");
         subTask1.setDescription("Исправить все ошибки");
         tasks.updateSubTask(subTask1);
@@ -94,7 +94,7 @@ public class TaskManagerTest {
 
     @Test
     void shouldReturnTrueWhenEpicIsUpdated() {
-        Epic oldEpic = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
+        Epic oldEpic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
         epic1.setNameTask("Новая задача");
         epic1.setDescription("Исправить все ошибки");
         tasks.updateEpic(epic1);
@@ -140,14 +140,31 @@ public class TaskManagerTest {
 
     @Test
     void shouldNonConflictingValuesById() {
-        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
+        Task task1 = new Task("Прогулка", "Взять с собой собаку");
         tasks.createTask(task1);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
+        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
         task2.setId(2);
         tasks.updateTask(task2);
         assertNotEquals(tasks.getTaskById(task1.getId()), tasks.getTaskById(task2.getId()));
         task2.setId(task1.getId());
         tasks.updateTask(task2);
         assertEquals(tasks.getTaskById(task1.getId()), tasks.getTaskById(task2.getId()));
+    }
+
+    @Test
+    void shouldReturnSizeSubTasksFromEpic(){
+
+        epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
+        tasks.createEpic(epic1);
+        tasks.createEpic(epic2);
+        subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
+        subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
+        subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
+        tasks.createSubTask(subTask1);
+        tasks.createSubTask(subTask2);
+        tasks.createSubTask(subTask3);
+
+        assertEquals(2, tasks.getAllSubInEpic(epic1.getId()).size());
     }
 }

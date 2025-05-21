@@ -1,46 +1,74 @@
 package ru.practicum.manager;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.practicum.manager.Managers.getDefaultHistory;
+import static ru.practicum.manager.Managers.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.model.*;
 
+import java.util.List;
+
 
 class InMemoryHistoryManagerTest {
-    public HistoryManager tasks = getDefaultHistory();
+    public HistoryManager tasksHistory = getDefaultHistory();
+    Task task1;
+    Task task2;
+    Epic epic1;
+    Epic epic2;
+
+    @BeforeEach
+    void before() {
+        task1 = new Task("Прогулка", "Взять с собой собаку");
+        task1.setId(1);
+        task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
+        task2.setId(2);
+        epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic1.setId(3);
+        epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
+        epic2.setId(4);
+
+    }
 
     @Test
     void checkHistory() {
-        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
-        tasks.addHistory(task1);
-        tasks.addHistory(task2);
-        tasks.addHistory(task1);
-        tasks.addHistory(task2);
-        task1.setDescription("Новое описание");
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task2);
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task2);
+        List<? extends Task> arr = tasksHistory.getHistory();
 
-        assertNotEquals(tasks.getHistory().getFirst().getDescription(), task1.getDescription());
+        assertTrue(arr.contains(task1));
+        assertTrue(arr.contains(task2));
+
     }
 
     @Test
-    void shouldReturn10WhenTasksMoreThen10() {
-        Task task1 = new Task("Прогулка", "Взять с собой собаку", StatusTask.NEW);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями", StatusTask.NEW);
-        Epic epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра", StatusTask.NEW);
-        Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня", StatusTask.NEW);
-        tasks.addHistory(task1);
-        tasks.addHistory(task2);
-        tasks.addHistory(task1);
-        tasks.addHistory(epic1);
-        tasks.addHistory(epic2);
-        tasks.addHistory(epic1);
-        tasks.addHistory(epic1);
-        tasks.addHistory(task1);
-        tasks.addHistory(task1);
-        tasks.addHistory(task2);
-        tasks.addHistory(task2);
-        tasks.addHistory(epic2);
-        assertEquals(10, tasks.getHistory().size());
+    void shouldReturnTrueWhenWithoutDuplicate() {
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task2);
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(epic1);
+        tasksHistory.addHistory(epic2);
+        tasksHistory.addHistory(epic1);
+        tasksHistory.addHistory(epic1);
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task2);
+        tasksHistory.addHistory(task2);
+        tasksHistory.addHistory(epic2);
+        assertEquals(4, tasksHistory.getHistory().size());
     }
+
+    @Test
+    void shouldReturn3WhenTaskInHistoryIsRemoved() {
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(task2);
+        tasksHistory.addHistory(task1);
+        tasksHistory.addHistory(epic1);
+        tasksHistory.addHistory(epic2);
+        tasksHistory.removeHistoryById(task1.getId());
+        assertEquals(3, tasksHistory.getHistory().size());
+    }
+
 }
