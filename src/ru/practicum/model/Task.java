@@ -15,6 +15,10 @@ public class Task {
         this.description = description;
     }
 
+    public Task(String nameTask, String description) {
+        this(nameTask, description, StatusTask.NEW);
+    }
+
     public int getId() {
         return id;
     }
@@ -64,4 +68,5 @@ public class Task {
     public String toString() {
         return "Задача №" + id + "\n   Название: " + nameTask + "\n   Описание: " + description + "\n   Статус: " + statusTask + "\n";
     }
+
 }

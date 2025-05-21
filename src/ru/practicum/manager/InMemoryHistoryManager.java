@@ -1,56 +1,89 @@
 package ru.practicum.manager;
 
-import ru.practicum.model.Epic;
-import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    List<Task> history = new ArrayList<>(10);
+    private Node<Task> head;
+    private Node<Task> tail;
+
+    private final Map<Integer, Node<Task>> history = new LinkedHashMap<>();
+
 
     //Метод, который возвращает список истории
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        List<Task> tasks = new ArrayList<>();
+        Node<Task> current = head;
+        while (current != null) {
+            tasks.add(current.data);
+            current = current.next;
+        }
+        return tasks;
     }
 
+
+    @Override
     //Метод для добавления Задач в список историй
     public <T extends Task> void addHistory(T tasks) {
-        if(tasks == null){
+        if (tasks == null) {
             return;
         }
-        
-        if (history.size() == 10) {
-            history.removeFirst();
-        }
+        removeHistoryById(tasks.getId());
+        linkLast(tasks);
+    }
 
-        Task taskCopy;
-        //Клонирую Задачи в зависимости от их типа
-        if (tasks instanceof SubTask original) {
-            SubTask subTaskCopy = new SubTask(original.getNameTask(), original.getDescription(), original.getStatusTask(), original.getIdEpic());
-            subTaskCopy.setId(original.getId());
-            taskCopy = subTaskCopy;
-
-        } else if (tasks instanceof Epic original) {
-            Epic epicCopy = new Epic(original.getNameTask(), original.getDescription(), original.getStatusTask());
-            epicCopy.setId(original.getId());
-
-            for (SubTask sub : original.getSubTask()) {
-                SubTask subTaskCopy = new SubTask(sub.getNameTask(), sub.getDescription(), sub.getStatusTask(), sub.getIdEpic());
-                subTaskCopy.setId(sub.getId());
-                epicCopy.addSubTask(subTaskCopy);
-            }
-
-            taskCopy = epicCopy;
-
+    //Метод, который добавляет узел в конец
+    private <T extends Task> void linkLast(T task) {
+        Node<Task> newNode = new Node<>(tail, task, null);
+        if (tail != null) {
+            tail.next = newNode;
         } else {
-            taskCopy = new Task(tasks.getNameTask(), tasks.getDescription(), tasks.getStatusTask());
-            taskCopy.setId(tasks.getId());
+            head = newNode;
+        }
+        tail = newNode;
+        history.put(task.getId(), newNode);
+    }
+
+    //Метод, который удаляет связи с узлом
+    private void removeNode(Node<Task> node) {
+        Node<Task> prev = node.prev;
+        Node<Task> next = node.next;
+
+        if (prev != null) {
+            prev.next = next;
+        } else {
+            head = next;
         }
 
-        history.add(taskCopy);
+        if (next != null) {
+            next.prev = prev;
+        } else {
+            tail = prev;
+        }
+    }
 
+    //Метод, который удаляет задачу из истории по id
+    @Override
+    public void removeHistoryById(int id) {
+        Node<Task> node = history.remove(id);
+
+        if (node != null) {
+            removeNode(node);
+        }
+    }
+
+    //Внутренний класс Node, для создания узла
+    private static class Node<T extends Task> {
+        T data;
+        Node<T> prev;
+        Node<T> next;
+
+        Node(Node<T> prev, T data, Node<T> next) {
+            this.prev = prev;
+            this.data = data;
+            this.next = next;
+        }
     }
 }
