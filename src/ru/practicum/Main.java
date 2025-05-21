@@ -21,7 +21,7 @@ public class Main {
         taskManager.createEpic(epic2);
         SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
         SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
-        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
+        SubTask subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic1.getId());
         taskManager.createSubTask(subTask1);
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
@@ -66,6 +66,8 @@ public class Main {
         System.out.println(taskManager.showHistory());
         taskManager.getSubTaskById(subTask3.getId());
         System.out.println(taskManager.showHistory());
+        taskManager.getSubTaskById(subTask1.getId());
+        System.out.println(taskManager.showHistory());
 
 
         taskManager.removeTaskById(task1.getId());
@@ -74,25 +76,11 @@ public class Main {
         taskManager.removeSubTaskById(subTask2.getId());
         System.out.println(taskManager.showHistory());
 
+
         taskManager.removeEpicById(epic1.getId());
         System.out.println(taskManager.showHistory());
 
     }
 
-    private static void printAllTasks(TaskManager manager) {
-        System.out.println("Задачи:");
-        for (Task task : manager.getTasks()) {
-            System.out.println(task);
-        }
-        System.out.println("Эпики:");
-        for (Task epic : manager.getEpic()) {
-            System.out.println(epic);
-
-        }
-        System.out.println("Подзадачи:");
-        for (Task subtask : manager.getSubTasks()) {
-            System.out.println(subtask);
-        }
-
-    }
 }
+

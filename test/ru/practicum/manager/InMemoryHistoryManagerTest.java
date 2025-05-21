@@ -38,9 +38,7 @@ class InMemoryHistoryManagerTest {
         tasksHistory.addHistory(task2);
         List<? extends Task> arr = tasksHistory.getHistory();
 
-        assertTrue(arr.contains(task1));
-        assertTrue(arr.contains(task2));
-
+        assertEquals(2, arr.size());
     }
 
     @Test

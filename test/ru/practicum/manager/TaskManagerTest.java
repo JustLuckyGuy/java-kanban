@@ -152,7 +152,7 @@ public class TaskManagerTest {
     }
 
     @Test
-    void shouldReturnSizeSubTasksFromEpic(){
+    void shouldReturnSizeSubTasksFromEpic() {
 
         epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
         epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
@@ -166,5 +166,18 @@ public class TaskManagerTest {
         tasks.createSubTask(subTask3);
 
         assertEquals(2, tasks.getAllSubInEpic(epic1.getId()).size());
+    }
+
+    @Test
+    void shouldReturnTrueWhenTaskIsRemovedFromTaskManagerAndHistory() {
+
+        tasks.getTaskById(1);
+        tasks.getTaskById(2);
+        tasks.getTaskById(1);
+        tasks.getEpicById(3);
+        assertEquals(3, tasks.showHistory().size());
+
+        tasks.removeTaskById(1);
+        assertEquals(2, tasks.showHistory().size());
     }
 }
