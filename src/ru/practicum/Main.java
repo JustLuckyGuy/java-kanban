@@ -1,15 +1,13 @@
 package ru.practicum;
 
-
-import ru.practicum.manager.Managers;
-import ru.practicum.manager.TaskManager;
+import ru.practicum.manager.FileBackedTaskManager;
 import ru.practicum.model.*;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+        FileBackedTaskManager taskManager = new FileBackedTaskManager();
 
         Task task1 = new Task("Прогулка", "Взять с собой собаку");
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
@@ -26,59 +24,12 @@ public class Main {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask3.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask3.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
+        task1.setNameTask("Купить воды");
+        taskManager.updateTask(task1);
 
+        SubTask task = (SubTask) taskManager.fromStringToTask("5,SUBTASK,ывфв a plan,NEW,Think about a plan,3");
+        System.out.println(task);
 
-        taskManager.removeTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-
-        taskManager.removeSubTaskById(subTask2.getId());
-        System.out.println(taskManager.showHistory());
-
-
-        taskManager.removeEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
 
     }
 
