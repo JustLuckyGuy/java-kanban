@@ -1,13 +1,18 @@
 package ru.practicum;
 
-import ru.practicum.manager.FileBackedTaskManager;
+import ru.practicum.manager.*;
 import ru.practicum.model.*;
+
+import java.io.File;
+
+import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        FileBackedTaskManager taskManager = new FileBackedTaskManager();
+
+        FileBackedTaskManager taskManager = new FileBackedTaskManager("YandexPracticum7.csv");
 
         Task task1 = new Task("Прогулка", "Взять с собой собаку");
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
@@ -24,14 +29,12 @@ public class Main {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        task1.setNameTask("Купить воды");
-        taskManager.updateTask(task1);
-
-        SubTask task = (SubTask) taskManager.fromStringToTask("5,SUBTASK,ывфв a plan,NEW,Think about a plan,3");
-        System.out.println(task);
+        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
+        System.out.println(restored.getTasks());
 
 
     }
 
 }
+
 
