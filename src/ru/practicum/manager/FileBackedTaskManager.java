@@ -175,7 +175,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             if (!file.isAbsolute()) {
                 file1 = new File(pathToProject + file.getName());
             }
-            String line = readFromFile.readLine();
+            String line;
+            readFromFile.readLine();
             while (readFromFile.ready()) {
                 line = readFromFile.readLine();
 
