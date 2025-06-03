@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        FileBackedTaskManager taskManager = new FileBackedTaskManager("YandexPracticum7.csv");
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(new File("YandexPracticum7.csv"));
 
         Task task1 = new Task("Прогулка", "Взять с собой собаку");
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");

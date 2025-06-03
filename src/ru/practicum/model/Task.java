@@ -51,6 +51,10 @@ public class Task {
         return description;
     }
 
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
+
     //Переопределил методы equals и hashcode
     @Override
     public boolean equals(Object o) {

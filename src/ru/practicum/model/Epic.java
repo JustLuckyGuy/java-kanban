@@ -56,6 +56,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask +
                 "\nОписание: " + description + "\n");

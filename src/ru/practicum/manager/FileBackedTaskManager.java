@@ -7,18 +7,17 @@ import ru.practicum.model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final Path pathToProject = Paths.get("C:\\Users\\Kiruxa\\Desktop\\Practicum\\java-kanban\\");
-    File file1;
+    private static final String BOM = "\uFEFF";
+    private static final String SAMPLEHEADER = "id,type,name,status,description,epic";
+    private final File workedFile;
 
-    //Создал конструктор, который поможет ссылаться на один и тот же объект
-    public FileBackedTaskManager(String filename) {
-        File file = new File(filename);
-        this.file1 = file.isAbsolute() ? file : new File(pathToProject.toFile() + File.separator + filename);
+
+    //Создал конструктор, который поможет ссылаться на один и тот же файл
+    public FileBackedTaskManager(File file) {
+        this.workedFile = file;
     }
 
     @Override
@@ -96,13 +95,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     //Метод, который сохраняет в текущий файл, новые задачи
     private void save() {
         try (BufferedWriter saveTasksInFile = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(file1, false), StandardCharsets.UTF_8)
+                new OutputStreamWriter(new FileOutputStream(workedFile, false), StandardCharsets.UTF_8)
         )) {
-            if (!file1.exists()) {
+            if (!workedFile.exists()) {
                 throw new FileNotFoundException();
             }
-            saveTasksInFile.write("\uFEFF");
-            saveTasksInFile.write("id,type,name,status,description,epic");
+            saveTasksInFile.write(BOM);
+            saveTasksInFile.write(SAMPLEHEADER);
             saveTasksInFile.newLine();
 
             for (Task task : getTasks()) {
@@ -172,9 +171,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         new FileInputStream(file), StandardCharsets.UTF_8
                 )
         )) {
-            if (!file.isAbsolute()) {
-                file1 = new File(pathToProject + file.getName());
-            }
+            int currentMaxId = 0;
             String line;
             readFromFile.readLine();
             while (readFromFile.ready()) {
@@ -183,56 +180,56 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (line.isBlank()) {
                     continue;
                 }
-
                 Task task = fromStringToTask(line);
-                assert task != null;
-                if (task instanceof Epic) {
-                    super.createEpic((Epic) task);
-                } else if (task instanceof SubTask) {
-                    super.createSubTask((SubTask) task);
-                } else {
-                    super.createTask(task);
+
+                try {
+                    if (task == null) {
+                        throw new NullPointerException("Не найдена задача");
+                    }
+                    if (currentMaxId < task.getId()) {
+                        currentMaxId = task.getId();
+                    }
+                    switch (task.getType()) {
+                        case TASK -> tasks.put(task.getId(), task);
+                        case EPIC -> epics.put(task.getId(), (Epic) task);
+                        case SUBTASK -> {
+                            subTasks.put(task.getId(), (SubTask) task);
+                            updateSubTask((SubTask) task);
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    throw new ManagerLoadException(e.getMessage());
                 }
             }
+            counterID = currentMaxId + 1;
         } catch (FileNotFoundException e) {
             throw new ManagerLoadException("Файл не найден" + e.getMessage());
         } catch (IOException e) {
             throw new ManagerLoadException("Произошла ошибка при чтении файла" + e.getMessage());
-        } catch (AssertionError e) {
+        } catch (Exception e) {
             throw new ManagerLoadException("Произошла ошибка с чтением задачи" + e.getMessage());
         }
     }
 
     //Метод, который позволит выгружать задачи из файла при создании объекта FileBackedManager
     public static FileBackedTaskManager loadFromFile(File file) {
-
-        if (!file.isAbsolute()) {
-            file = new File("C:\\Users\\Kiruxa\\Desktop\\Practicum\\java-kanban\\", file.getName());
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try {
+            manager.loadTasks(file);
+        } catch (Exception e) {
+            throw new ManagerLoadException("Ошибка при загрузке файла");
         }
-
-
-        FileBackedTaskManager manager = new FileBackedTaskManager(file.getName());
-        manager.loadTasks(file);
         return manager;
     }
 
     //Перегруженный метод toString
     private String toString(Task task) {
-        TaskType taskType;
+        TaskType taskType = task.getType();
         String idOfEpicInSubtask = "";
-        if (task instanceof Epic) {
-            taskType = TaskType.EPIC;
-        } else if (task instanceof SubTask) {
-            taskType = TaskType.SUBTASK;
-        } else {
-            taskType = TaskType.TASK;
-        }
 
         if (taskType == TaskType.SUBTASK) idOfEpicInSubtask = String.valueOf(((SubTask) task).getIdEpic());
 
-        return idOfEpicInSubtask.isEmpty() ? String.format("%d,%s,%s,%s,%s\n", task.getId(), taskType, task.getNameTask(),
-                task.getStatusTask(), task.getDescription())
-                : String.format("%d,%s,%s,%s,%s,%s\n", task.getId(), taskType, task.getNameTask(),
+        return String.format("%d,%s,%s,%s,%s,%s\n", task.getId(), taskType, task.getNameTask(),
                 task.getStatusTask(), task.getDescription(), idOfEpicInSubtask);
     }
 

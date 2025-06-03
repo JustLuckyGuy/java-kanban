@@ -33,30 +33,37 @@ class FileBackedTaskManagerTest {
 
     //Тест с сохранением и загрузкой файла
     @Test
-    void shouldSaveMultipleTasksCorrectly() {
-        FileBackedTaskManager taskManager = new FileBackedTaskManager(tempFile.getAbsolutePath());
+    void shouldSaveAndLoadTasksCorrectly() {
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(tempFile);
         Task task1 = new Task("Задача 1", "Описание 1");
         Task task2 = new Task("Задача 2", "Описание 2");
-
         taskManager.createTask(task1);
         taskManager.createTask(task2);
+        task2.setId(10);
+        task2.setStatusTask(StatusTask.IN_PROGRESS);
+        taskManager.updateTask(task2);
 
         FileBackedTaskManager restored = loadFromFile(tempFile);
 
         List<Task> restoredTasks = restored.getTasks();
-
         assertEquals(2, restoredTasks.size(), "Должно быть 2 задачи после загрузки");
 
         Task task = restoredTasks.getFirst();
         assertEquals("Задача 1", task.getNameTask());
         assertEquals(StatusTask.NEW, task.getStatusTask());
 
+        Task fullFieldsTask = restoredTasks.get(1);
+        assertEquals(10, fullFieldsTask.getId());
+        assertEquals("Задача 2", fullFieldsTask.getNameTask());
+        assertEquals("Описание 2", fullFieldsTask.getDescription());
+        assertEquals(StatusTask.IN_PROGRESS, fullFieldsTask.getStatusTask());
+
     }
 
     //Тест с несколькими задачами
     @Test
-    void shouldLoadMultipleTasksFromFile() {
-        FileBackedTaskManager manager = new FileBackedTaskManager(tempFile.getAbsolutePath());
+    void shouldLoadEpicCorrectly() {
+        FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
 
         Epic epic = new Epic("Эпик 1", "Описание эпика");
         manager.createEpic(epic);
@@ -70,6 +77,9 @@ class FileBackedTaskManagerTest {
 
         assertEquals(1, restored.getEpic().size(), "Должен загрузиться один эпик");
         assertEquals(2, restored.getSubTasks().size(), "Должны загрузиться две подзадачи");
+
+        assertEquals(2, epic.getSubTask().size(), "Должен загрузить все подзадачи в свой эпик");
+
     }
 
     //Тест на исключения
