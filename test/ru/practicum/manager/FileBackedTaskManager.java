@@ -20,6 +20,7 @@ class FileBackedTaskManagerTest {
         tempFile = File.createTempFile("task_test", ".csv");
         tempFile.deleteOnExit(); // Файл удалится автоматически после завершения JVM
     }
+
     //Тест с проверкой пустого файла
     @Test
     void shouldSaveAndLoadEmptyFileCorrectly() {
@@ -73,7 +74,7 @@ class FileBackedTaskManagerTest {
 
     //Тест на исключения
     @Test
-    void shouldReturnExceptionWhenFileNonExists(){
+    void shouldReturnExceptionWhenFileNonExists() {
         assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("dsadas.csv")));
     }
 }

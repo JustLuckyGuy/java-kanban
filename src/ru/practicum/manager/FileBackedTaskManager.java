@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final static Path pathToProject = Paths.get("C:\\Users\\Kiruxa\\Desktop\\Practicum\\java-kanban\\");
+    private final Path pathToProject = Paths.get("C:\\Users\\Kiruxa\\Desktop\\Practicum\\java-kanban\\");
     File file1;
 
     //Создал конструктор, который поможет ссылаться на один и тот же объект
@@ -98,7 +98,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (BufferedWriter saveTasksInFile = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(file1, false), StandardCharsets.UTF_8)
         )) {
-            if(!file1.exists()){
+            if (!file1.exists()) {
                 throw new FileNotFoundException();
             }
             saveTasksInFile.write("\uFEFF");
@@ -127,8 +127,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] taskFields = value.split(",");
 
         try {
-            int id_Task = Integer.parseInt(taskFields[0]);
-            if (id_Task < 0) {
+            int idTask = Integer.parseInt(taskFields[0]);
+            if (idTask < 0) {
                 throw new IllegalArgumentException("ID задачи не может быть отрицательны, проверьте ID задачи на корректность");
             }
             TaskType taskType = TaskType.valueOf(taskFields[1]);
@@ -139,20 +139,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             switch (taskType) {
                 case TASK -> {
                     Task task = new Task(taskName, taskDescription, statusTask);
-                    task.setId(id_Task);
+                    task.setId(idTask);
                     return task;
                 }
                 case EPIC -> {
                     Epic epic = new Epic(taskName, taskDescription);
                     epic.setStatusTask(statusTask);
-                    epic.setId(id_Task);
+                    epic.setId(idTask);
                     return epic;
                 }
                 case SUBTASK -> {
                     int idEpic = Integer.parseInt(taskFields[5]);
                     SubTask subTask = new SubTask(taskName, taskDescription, idEpic);
                     subTask.setStatusTask(statusTask);
-                    subTask.setId(id_Task);
+                    subTask.setId(idTask);
                     return subTask;
                 }
             }
@@ -207,7 +207,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
 
         if (!file.isAbsolute()) {
-            file = new File(pathToProject.toFile(), file.getName());
+            file = new File("C:\\Users\\Kiruxa\\Desktop\\Practicum\\java-kanban\\", file.getName());
         }
 
 
