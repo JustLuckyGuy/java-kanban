@@ -1,6 +1,6 @@
 package ru.practicum.manager;
 
-import ru.practicum.exeptions.ManagerCollectionTaskExeption;
+import ru.practicum.exeptions.ManagerCollectionTaskException;
 import ru.practicum.exeptions.ManagerLoadException;
 import ru.practicum.exeptions.ManagerSaveException;
 import ru.practicum.model.*;
@@ -158,9 +158,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
         } catch (NumberFormatException e) {
-            throw new ManagerCollectionTaskExeption("Неверно введен id в файле, проверьте пожалуйста файл" + e.getMessage());
+            throw new ManagerCollectionTaskException("Неверно введен id в файле, проверьте пожалуйста файл" + e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new ManagerCollectionTaskExeption(e.getMessage());
+            throw new ManagerCollectionTaskException(e.getMessage());
         }
         return null;
     }
