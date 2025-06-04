@@ -12,12 +12,12 @@ import static ru.practicum.manager.Managers.getDefaultHistory;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    private int counterID = 1;
+    protected int counterID = 1;
 
     //Создал 3 структуры HashMap, которые будут хранить наши задачи и Эпики
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    protected final HashMap<Integer, Task> tasks = new HashMap<>();
+    protected final HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    protected final HashMap<Integer, Epic> epics = new HashMap<>();
 
     private final HistoryManager historyManager = getDefaultHistory();
 

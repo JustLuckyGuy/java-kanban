@@ -15,6 +15,11 @@ public class SubTask extends Task {
         return idEpic;
     }
 
+    @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
+    }
+
     //Переопределение метода toString
     @Override
     public String toString() {

@@ -1,15 +1,18 @@
 package ru.practicum;
 
-
-import ru.practicum.manager.Managers;
-import ru.practicum.manager.TaskManager;
+import ru.practicum.manager.*;
 import ru.practicum.model.*;
+
+import java.io.File;
+
+import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(new File("YandexPracticum7.csv"));
 
         Task task1 = new Task("Прогулка", "Взять с собой собаку");
         Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
@@ -26,61 +29,12 @@ public class Main {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask3.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getEpicById(epic2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask2.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask3.getId());
-        System.out.println(taskManager.showHistory());
-        taskManager.getSubTaskById(subTask1.getId());
-        System.out.println(taskManager.showHistory());
+        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
+        System.out.println(restored.getTasks());
 
-
-        taskManager.removeTaskById(task1.getId());
-        System.out.println(taskManager.showHistory());
-
-        taskManager.removeSubTaskById(subTask2.getId());
-        System.out.println(taskManager.showHistory());
-
-
-        taskManager.removeEpicById(epic1.getId());
-        System.out.println(taskManager.showHistory());
 
     }
 
 }
+
 
