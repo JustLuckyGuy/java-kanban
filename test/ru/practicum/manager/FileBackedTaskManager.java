@@ -53,17 +53,20 @@ class FileBackedTaskManagerTest {
         assertEquals(StatusTask.NEW, task.getStatusTask());
 
         Task fullFieldsTask = restoredTasks.get(1);
-        assertEquals(10, fullFieldsTask.getId());
-        assertEquals("Задача 2", fullFieldsTask.getNameTask());
-        assertEquals("Описание 2", fullFieldsTask.getDescription());
-        assertEquals(StatusTask.IN_PROGRESS, fullFieldsTask.getStatusTask());
+        assertEquals(10, fullFieldsTask.getId(), "ID должны совпадать");
+        assertEquals("Задача 2", fullFieldsTask.getNameTask(), "Имена должны совпадать");
+        assertEquals("Описание 2", fullFieldsTask.getDescription(), "Описания должны совпадать");
+        assertEquals(StatusTask.IN_PROGRESS, fullFieldsTask.getStatusTask(), "Статусы должны совпадать");
 
     }
 
     //Тест с несколькими задачами
     @Test
-    void shouldLoadEpicCorrectly() {
+    void shouldLoadTasksCorrectly() {
         FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
+
+        Task task = new Task("Задача 1", "Задача 2");
+        manager.createTask(task);
 
         Epic epic = new Epic("Эпик 1", "Описание эпика");
         manager.createEpic(epic);
@@ -77,8 +80,35 @@ class FileBackedTaskManagerTest {
 
         assertEquals(1, restored.getEpic().size(), "Должен загрузиться один эпик");
         assertEquals(2, restored.getSubTasks().size(), "Должны загрузиться две подзадачи");
-
         assertEquals(2, epic.getSubTask().size(), "Должен загрузить все подзадачи в свой эпик");
+
+        Task taskManager = manager.getTaskById(task.getId());
+        Task taskRestored = restored.getTaskById(task.getId());
+
+        assertEquals(taskManager.getId(), taskRestored.getId(), "ID задач должны совпадать");
+        assertEquals(taskManager.getNameTask(), taskRestored.getNameTask(), "Имена задач должны совпадать");
+        assertEquals(taskManager.getDescription(), taskRestored.getDescription(), "Описания задач должны совпадать");
+        assertEquals(taskManager.getStatusTask(), taskRestored.getStatusTask(), "Статусы задач должны совпадать");
+
+        Epic epicManager = manager.getEpicById(epic.getId());
+        Epic epicRestored = restored.getEpicById(epic.getId());
+
+        assertEquals(epicManager.getId(), epicRestored.getId(), "ID эпиков должны совпадать");
+        assertEquals(epicManager.getNameTask(), epicRestored.getNameTask(), "Имена эпиков должны совпадать");
+        assertEquals(epicManager.getDescription(), epicRestored.getDescription(), "Описания эпиков должны совпадать");
+        assertEquals(epicManager.getStatusTask(), epicRestored.getStatusTask(), "Статусы эпиков должны совпадать");
+        assertEquals(epicManager.getSubTask().size(), epicRestored.getSubTask().size(), "Размеры списков подзадач у эпиков должны совпадать");
+
+        for (int i = 0; i < epicManager.getSubTask().size(); i++) {
+            SubTask subTaskManager = epicManager.getSubTask().get(i);
+            SubTask subTaskRestored = epicRestored.getSubTask().get(i);
+
+            assertEquals(subTaskManager.getId(), subTaskRestored.getId(), "ID подзадач должны совпадать");
+            assertEquals(subTaskManager.getNameTask(), subTaskRestored.getNameTask(), "Имена подзадач должны совпадать");
+            assertEquals(subTaskManager.getDescription(), subTaskRestored.getDescription(), "Описания подзадач должны совпадать");
+            assertEquals(subTaskManager.getStatusTask(), subTaskRestored.getStatusTask(), "Статусы подзадач должны совпадать");
+            assertEquals(subTaskManager.getIdEpic(), subTaskRestored.getIdEpic(), "Подзадачи должны ссылаться на один и тот же эпик");
+        }
 
     }
 
