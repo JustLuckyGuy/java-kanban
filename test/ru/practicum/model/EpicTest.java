@@ -57,4 +57,31 @@ public class EpicTest {
         assertEquals(StatusTask.DONE, epic.getStatusTask());
     }
 
+    @Test
+    void shouldReturnNEWStatusWhenAllSubtaskIsNew() {
+        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic.setId(1);
+        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic.getId());
+        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic.getId());
+        epic.addSubTask(subTask1);
+        epic.addSubTask(subTask2);
+        assertEquals(StatusTask.NEW, epic.getStatusTask());
+    }
+
+    @Test
+    void shouldReturnINPROGRESSWhenAllSubtaskIsINPROGRESS() {
+        Epic epic = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
+        epic.setId(1);
+        SubTask subTask1 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic.getId());
+        SubTask subTask2 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic.getId());
+        epic.addSubTask(subTask1);
+        epic.addSubTask(subTask2);
+        subTask1.setStatusTask(StatusTask.IN_PROGRESS);
+        subTask2.setStatusTask(StatusTask.IN_PROGRESS);
+        epic.updateSubTask(subTask1);
+        epic.updateSubTask(subTask2);
+        epic.checkStatus();
+        assertEquals(StatusTask.IN_PROGRESS, epic.getStatusTask());
+    }
+
 }
