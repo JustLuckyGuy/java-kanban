@@ -9,23 +9,25 @@ import ru.practicum.model.Task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static ru.practicum.manager.Managers.getDefault;
 
-public class TaskManagerTest {
-    public TaskManager tasks;
-    Task task1;
-    Task task2;
-    Epic epic1;
-    Epic epic2;
-    SubTask subTask1;
-    SubTask subTask2;
-    SubTask subTask3;
+
+public abstract class TaskManagerTest<T extends TaskManager> {
+    protected abstract T createTask();
+    protected T tasks;
+    protected Task task1;
+    protected Task task2;
+    protected Epic epic1;
+    protected Epic epic2;
+    protected SubTask subTask1;
+    protected SubTask subTask2;
+    protected SubTask subTask3;
 
 
     @BeforeEach
     void before() {
-        tasks = getDefault();
+        tasks = createTask();
         task1 = new Task("Прогулка", "Взять с собой собаку");
+
         task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
         tasks.createTask(task1);
         tasks.createTask(task2);

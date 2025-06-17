@@ -13,6 +13,7 @@ import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
 
 class FileBackedTaskManagerTest {
 
+
     private File tempFile;
 
     @BeforeEach
@@ -117,4 +118,6 @@ class FileBackedTaskManagerTest {
     void shouldReturnExceptionWhenFileNonExists() {
         assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("dsadas.csv")));
     }
+
+
 }

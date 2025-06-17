@@ -9,6 +9,7 @@ import ru.practicum.model.Task;
 import java.util.*;
 
 
+
 import static ru.practicum.manager.Managers.getDefaultHistory;
 
 
@@ -267,6 +268,7 @@ public class InMemoryTaskManager implements TaskManager {
         return getPrioritizedTasks().stream()
                 .anyMatch(task -> isTaskIntersect(addedTask, task));
     }
+
 
 }
 
