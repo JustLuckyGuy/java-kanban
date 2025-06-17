@@ -4,6 +4,8 @@ import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.model.Epic;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
+
+
 import java.util.*;
 
 
@@ -35,7 +37,9 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который позволит взять задачу из HashMap
     @Override
     public Task getTaskById(int idTask) {
-        historyManager.addHistory(tasks.get(idTask));
+        Optional.ofNullable(tasks.get(idTask))
+                        .ifPresent(historyManager::addHistory);
+
         return tasks.get(idTask);
     }
 
@@ -47,12 +51,8 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerIsIntersectException("Задача пересекается по времени с другой задачей");
         }
 
-        final Task savedTask = tasks.get(task.getId());
-        if (savedTask == null) {
-            return;
-        }
-        tasks.put(task.getId(), task);
-
+        Optional.ofNullable(tasks.get(task.getId()))
+                .ifPresent(savedTask -> tasks.put(task.getId(), task));
     }
 
     //Метод, которые удаляет все Задачи из структуры tasks
@@ -65,11 +65,13 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который удаляет Задачу по его идентификатору
     @Override
     public void removeTaskById(int idTask) {
-        if (!tasks.containsKey(idTask)) {
-            return;
-        }
-        historyManager.removeHistoryById(idTask);
-        tasks.remove(idTask);
+
+        Optional.ofNullable(tasks.get(idTask))
+                .ifPresent(task -> {
+                    historyManager.removeHistoryById(idTask);
+                    tasks.remove(idTask);
+                });
+
     }
 
     //Метод, который выводит все Задачи
@@ -85,11 +87,12 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerIsIntersectException("Задача пересекается по времени с другой задачей");
         }
 
-        if (epics.get(subTask.getIdEpic()) == null) {
-            return;
-        }
-        subTask.setId(counterID);
-        subTasks.put(subTask.getId(), subTask);
+        Optional.ofNullable(epics.get(subTask.getIdEpic()))
+                .ifPresent(savedSubTask -> {
+                    subTask.setId(counterID);
+                    subTasks.put(subTask.getId(), subTask);
+                });
+
         Epic epic = epics.get(subTask.getIdEpic());
         epic.addSubTask(subTask);
         epic.checkStatus();
@@ -100,7 +103,8 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который возвращает Подзадачу по его идентификатору.
     @Override
     public SubTask getSubTaskById(int idSubTask) {
-        historyManager.addHistory(subTasks.get(idSubTask));
+        Optional.ofNullable(subTasks.get(idSubTask))
+                .ifPresent(historyManager::addHistory);
         return subTasks.get(idSubTask);
     }
 
@@ -111,19 +115,17 @@ public class InMemoryTaskManager implements TaskManager {
             throw new ManagerIsIntersectException("Задача пересекается по времени с другой задачей");
         }
 
-        if (epics.get(subTask.getIdEpic()) == null) {
-            return;
-        }
+        Optional.ofNullable(subTasks.get(subTask.getId()))
+                .ifPresent(savedSubTask -> subTasks.put(subTask.getId(), subTask));
 
-        final SubTask savedSubTask = subTasks.get(subTask.getId());
-        if (savedSubTask == null) {
-            return;
-        }
-        subTasks.put(subTask.getId(), subTask);
-        Epic epic = epics.get(subTask.getIdEpic());
-        epic.updateSubTask(subTask);
-        epic.checkStatus();
-        epic.updateDuration();
+        Optional.ofNullable(epics.get(subTask.getIdEpic()))
+                .ifPresent(epic -> {
+                    Epic epic1 = epics.get(subTask.getIdEpic());
+                    epic1.updateSubTask(subTask);
+                    epic1.checkStatus();
+                    epic1.updateDuration();
+                });
+
     }
 
     //Метод, который удаляет все Подзадачи из структуры subTasks
@@ -140,17 +142,15 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который удаляет Подзадачу по его идентификатору
     @Override
     public void removeSubTaskById(int idSubTask) {
-        if (!subTasks.containsKey(idSubTask)) {
-            return;
-        }
-        historyManager.removeHistoryById(idSubTask);
+
+        SubTask subTask = subTasks.get(idSubTask);
+        if (subTask != null) historyManager.removeHistoryById(idSubTask);
         Epic epic = epics.get(subTasks.get(idSubTask).getIdEpic());
         epic.removeSubTask(subTasks.get(idSubTask));
         subTasks.remove(idSubTask);
         epic.checkStatus();
         epic.updateDuration();
     }
-
 
     //Метод, который выводит все Подзадачи из структуры
     @Override
@@ -170,22 +170,20 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который возвращает Эпик по его идентификатору
     @Override
     public Epic getEpicById(int idEpic) {
-        historyManager.addHistory(epics.get(idEpic));
+        Optional.ofNullable(epics.get(idEpic))
+                        .ifPresent(historyManager::addHistory);
         return epics.get(idEpic);
     }
 
     //Метод, который обновляет Эпик
     @Override
     public void updateEpic(Epic epic) {
-
-        if (epics.get(epic.getId()) == null) {
-            return;
-        }
-
-        final Epic savedEpic = epics.get(epic.getId());
-        savedEpic.setNameTask(epic.getNameTask());
-        savedEpic.setDescription(epic.getDescription());
-        epics.put(savedEpic.getId(), savedEpic);
+        Optional.ofNullable(epics.get(epic.getId()))
+                .ifPresent(savedepic -> {
+                    savedepic.setNameTask(epic.getNameTask());
+                    savedepic.setDescription(epic.getDescription());
+                    epics.put(savedepic.getId(), savedepic);
+                });
     }
 
     //Метод, который удаляет все Эпики из структуры
@@ -199,16 +197,18 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который удаляет Эпик по его идентификатору
     @Override
     public void removeEpicById(int idEpic) {
-        if (!epics.containsKey(idEpic)) {
-            return;
-        }
-        epics.get(idEpic).getSubTask().stream()
-                .map(SubTask::getId)
-                .forEach(subTasks::remove);
 
-        removeSubFromEpicHistory(idEpic);
-        historyManager.removeHistoryById(idEpic);
-        epics.remove(idEpic);
+        Optional.ofNullable(epics.get(idEpic))
+                        .ifPresent(epic -> {
+                            epic.getSubTask().stream()
+                                    .map(SubTask::getId)
+                                    .forEach(subTasks::remove);
+
+                            removeSubFromEpicHistory(idEpic);
+                            historyManager.removeHistoryById(idEpic);
+                            epics.remove(idEpic);
+                        });
+
     }
 
 
@@ -244,6 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public TreeSet<Task> getPrioritizedTasks() {
         TreeSet<Task> priorityTaskOfData = new TreeSet<>(Comparator.comparing(Task::getStartTime).thenComparingInt(Task::getId));
+
         tasks.values().stream()
                 .map(task -> task.getStartTime() != null ? task : null)
                 .filter(Objects::nonNull)

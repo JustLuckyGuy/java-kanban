@@ -46,10 +46,16 @@ public class Main {
         taskManager.getTaskById(1);
         taskManager.getSubTaskById(5);
         taskManager.getEpicById(3);
-        taskManager.removeSubTaskById(5);
 
-
+        taskManager.getTaskById(2).setNameTask("dsadas");
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(121);
+        taskManager.removeTaskById(123);
+        taskManager.getEpicById(4);
+        taskManager.removeEpicById(3);
         System.out.println(taskManager.showHistory());
+        System.out.println(taskManager.getTasks());
+        //System.out.println(taskManager.getTaskById(7));
     }
 
 }
