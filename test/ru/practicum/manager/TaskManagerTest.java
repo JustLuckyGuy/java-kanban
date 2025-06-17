@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected abstract T createTask();
+
     protected T tasks;
     protected Task task1;
     protected Task task2;
