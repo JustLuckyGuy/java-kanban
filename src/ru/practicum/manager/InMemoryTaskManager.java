@@ -38,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int idTask) {
         Optional.ofNullable(tasks.get(idTask))
-                        .ifPresent(historyManager::addHistory);
+                .ifPresent(historyManager::addHistory);
 
         return tasks.get(idTask);
     }
@@ -171,7 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(int idEpic) {
         Optional.ofNullable(epics.get(idEpic))
-                        .ifPresent(historyManager::addHistory);
+                .ifPresent(historyManager::addHistory);
         return epics.get(idEpic);
     }
 
@@ -189,7 +189,10 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который удаляет все Эпики из структуры
     @Override
     public void removeAllEpics() {
-        epics.keySet().forEach(id -> {removeSubFromEpicHistory(id); historyManager.removeHistoryById(id);});
+        epics.keySet().forEach(id -> {
+            removeSubFromEpicHistory(id);
+            historyManager.removeHistoryById(id);
+        });
         subTasks.clear();
         epics.clear();
     }
@@ -199,18 +202,17 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicById(int idEpic) {
 
         Optional.ofNullable(epics.get(idEpic))
-                        .ifPresent(epic -> {
-                            epic.getSubTask().stream()
-                                    .map(SubTask::getId)
-                                    .forEach(subTasks::remove);
+                .ifPresent(epic -> {
+                    epic.getSubTask().stream()
+                            .map(SubTask::getId)
+                            .forEach(subTasks::remove);
 
-                            removeSubFromEpicHistory(idEpic);
-                            historyManager.removeHistoryById(idEpic);
-                            epics.remove(idEpic);
-                        });
+                    removeSubFromEpicHistory(idEpic);
+                    historyManager.removeHistoryById(idEpic);
+                    epics.remove(idEpic);
+                });
 
     }
-
 
 
     //Метод, который выводит все Эпики
