@@ -10,12 +10,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
     private static final String BOM = "\uFEFF";
-    private static final String HEADER = "id,type,name,status,description,dateStart,duration,epic,";
+    private static final String HEADER = "id,type,name,status,description,dateStart,dateEnd,duration,epic,";
     private final File workedFile;
 
 
@@ -138,7 +139,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         StatusTask statusTask = StatusTask.valueOf(taskFields[3]);
         String taskDescription = taskFields[4];
         LocalDateTime startTime = !taskFields[5].isBlank() ? LocalDateTime.parse(taskFields[5], formatter) : null;
-        Duration duration = !taskFields[6].isBlank() ? Duration.ofMinutes(Long.parseLong(taskFields[6])) : null;
+        LocalDateTime endTime = !taskFields[6].isBlank() ? LocalDateTime.parse(taskFields[6], formatter) : null;
+        Duration duration = !taskFields[7].isBlank() ? Duration.ofMinutes(Long.parseLong(taskFields[7])) : null;
 
         switch (taskType) {
             case TASK -> {
@@ -146,6 +148,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.setId(idTask);
                 task.setStartTime(startTime);
                 task.setDuration(duration);
+
                 return task;
             }
             case EPIC -> {
@@ -154,10 +157,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epic.setId(idTask);
                 epic.setStartTime(startTime);
                 epic.setDuration(duration);
+                epic.setEndTime(endTime);
                 return epic;
             }
             case SUBTASK -> {
-                int idEpic = Integer.parseInt(taskFields[7]);
+                int idEpic = Integer.parseInt(taskFields[8]);
                 SubTask subTask = new SubTask(taskName, taskDescription, idEpic);
                 subTask.setStatusTask(statusTask);
                 subTask.setId(idTask);
@@ -217,6 +221,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         manager.loadTasks(file);
+        manager.loadPrioritizeTasks();
         return manager;
 
     }
@@ -229,16 +234,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         if (taskType == TaskType.SUBTASK) idOfEpicInSubtask = String.valueOf(((SubTask) task).getIdEpic());
 
-        return String.format("%d,%s,%s,%s,%s,%s,%s,%s\n",
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s\n",
                 task.getId(),
                 taskType,
                 task.getNameTask(),
                 task.getStatusTask(),
                 task.getDescription(),
                 task.getStartTime() != null ? task.getStartTime().format(formatter) : "",
+                task.getEndTime() != null ? task.getEndTime().format(formatter) : "",
                 task.getDuration() != null ? task.getDuration().toMinutes() : "",
                 idOfEpicInSubtask);
 
+    }
+
+    //Метод, который выгрузит в TaskManager список приоритетных задач
+    private void loadPrioritizeTasks() {
+
+        tasks.values().stream()
+                .map(task -> task.getStartTime() != null ? task : null)
+                .filter(Objects::nonNull)
+                .forEach(priorityTaskOfData::add);
+        subTasks.values().stream()
+                .map(subTask -> subTask.getStartTime() != null ? subTask : null)
+                .filter(Objects::nonNull)
+                .forEach(priorityTaskOfData::add);
     }
 
 }

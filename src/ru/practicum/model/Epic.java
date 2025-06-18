@@ -8,6 +8,9 @@ import java.util.Objects;
 public class Epic extends Task {
     //Поле, которое будет содержать наши подзадачи
     private final ArrayList<SubTask> subTasks;
+    private LocalDateTime endTime;
+
+
 
     //Конструктор ru.practicum.model.Epic
     public Epic(String nameEpic, String description) {
@@ -23,6 +26,18 @@ public class Epic extends Task {
                 .map(SubTask::getStartTime)
                 .filter(Objects::nonNull)
                 .min(LocalDateTime::compareTo)
+                .orElse(null);
+
+        endTime = subTasks.stream()
+                .map(timeOfSubTask -> {
+                    if (timeOfSubTask.getStartTime() != null && timeOfSubTask.getDuration() != null) {
+                        return timeOfSubTask.getStartTime().plus(timeOfSubTask.getDuration());
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
                 .orElse(null);
     }
 
@@ -58,18 +73,13 @@ public class Epic extends Task {
 
     @Override
     public LocalDateTime getEndTime() {
-        return subTasks.stream()
-                .map(subTask -> {
-                    if (subTask.getStartTime() != null && subTask.getDuration() != null) {
-                        return subTask.getStartTime().plus(subTask.getDuration());
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        return endTime;
     }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
 
     public void updateDuration() {
         duration = subTasks.stream()

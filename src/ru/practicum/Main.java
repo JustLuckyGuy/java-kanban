@@ -42,19 +42,14 @@ public class Main {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
-        taskManager.getTaskById(1);
-        taskManager.getSubTaskById(5);
-        taskManager.getEpicById(3);
+        System.out.println(taskManager.getPrioritizedTasks());
 
-        taskManager.getTaskById(2).setNameTask("dsadas");
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(121);
-        taskManager.removeTaskById(123);
-        taskManager.getEpicById(4);
-        taskManager.removeEpicById(3);
-        System.out.println(taskManager.showHistory());
-        System.out.println(taskManager.getTasks());
+        subTask2.setStartTime(LocalDateTime.of(2025, Month.AUGUST, 10, 15, 20));
+        taskManager.updateSubTask(subTask2);
+        System.out.println(taskManager.getPrioritizedTasks());
+
+
+        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
 
     }
 

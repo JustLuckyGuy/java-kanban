@@ -5,6 +5,7 @@ import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
     //методы для Task
@@ -49,5 +50,7 @@ public interface TaskManager {
     List<SubTask> getAllSubInEpic(int idEpic);
 
     List<Task> showHistory();
+
+    TreeSet<Task> getPrioritizedTasks();
 
 }

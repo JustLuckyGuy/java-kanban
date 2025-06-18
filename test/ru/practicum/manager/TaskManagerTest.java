@@ -2,13 +2,19 @@ package ru.practicum.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.model.Epic;
 import ru.practicum.model.StatusTask;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.TreeSet;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -182,5 +188,29 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         tasks.removeTaskById(1);
         assertEquals(2, tasks.showHistory().size());
+    }
+
+    @Test
+    void getPrioritizedTasksShouldReturnEmptySetWhenNoTasksAndIgnoreTaskWithoutTime() {
+        TreeSet<Task> result = tasks.getPrioritizedTasks();
+        assertTrue(result.isEmpty());
+
+        task1.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 0));
+        tasks.updateTask(task1);
+        result = tasks.getPrioritizedTasks();
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void shouldReturnExceptionWhenTasksIsIntersect(){
+        task1.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 0));
+        task1.setDuration(Duration.ofMinutes(30));
+        tasks.updateTask(task1);
+        Task tempTask = new Task("A", "B");
+        tempTask.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 10));
+        tempTask.setDuration(Duration.ofMinutes(10));
+
+        assertThrows(ManagerIsIntersectException.class, () -> tasks.createTask(tempTask));
+
     }
 }

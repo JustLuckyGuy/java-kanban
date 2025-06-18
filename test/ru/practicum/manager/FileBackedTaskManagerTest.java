@@ -11,21 +11,30 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
 
-class FileBackedTaskManagerTest {
-
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
 
     private File tempFile;
 
-    @BeforeEach
-    void setup() throws IOException {
-        tempFile = File.createTempFile("task_test", ".csv");
-        tempFile.deleteOnExit(); // Файл удалится автоматически после завершения JVM
+
+    @Override
+    protected FileBackedTaskManager createTask() {
+        try {
+            tempFile = File.createTempFile("task_test", ".csv");
+            tempFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new FileBackedTaskManager(tempFile);
     }
+
 
     //Тест с проверкой пустого файла
     @Test
-    void shouldSaveAndLoadEmptyFileCorrectly() {
-        FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(tempFile);
+    void shouldSaveAndLoadEmptyFileCorrectly() throws IOException {
+        File newTempFile = File.createTempFile("task_test", ".csv");
+        newTempFile.deleteOnExit();
+
+        FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(newTempFile);
 
         assertTrue(manager.getTasks().isEmpty(), "Список задач должен быть пуст");
         assertTrue(manager.getEpic().isEmpty(), "Список эпиков должен быть пуст");
@@ -35,7 +44,7 @@ class FileBackedTaskManagerTest {
     //Тест с сохранением и загрузкой файла
     @Test
     void shouldSaveAndLoadTasksCorrectly() {
-        FileBackedTaskManager taskManager = new FileBackedTaskManager(tempFile);
+        FileBackedTaskManager taskManager = createTask();
         Task task1 = new Task("Задача 1", "Описание 1");
         Task task2 = new Task("Задача 2", "Описание 2");
         taskManager.createTask(task1);
@@ -64,7 +73,7 @@ class FileBackedTaskManagerTest {
     //Тест с несколькими задачами
     @Test
     void shouldLoadTasksCorrectly() {
-        FileBackedTaskManager manager = new FileBackedTaskManager(tempFile);
+        FileBackedTaskManager manager = createTask();
 
         Task task = new Task("Задача 1", "Задача 2");
         manager.createTask(task);
@@ -118,6 +127,5 @@ class FileBackedTaskManagerTest {
     void shouldReturnExceptionWhenFileNonExists() {
         assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("dsadas.csv")));
     }
-
 
 }

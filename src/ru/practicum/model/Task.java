@@ -76,8 +76,12 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
         return startTime.plus(duration);
     }
+
 
     //Переопределил методы equals и hashcode
     @Override
