@@ -43,13 +43,15 @@ public class Main {
         taskManager.createSubTask(subTask3);
 
         System.out.println(taskManager.getPrioritizedTasks());
-
-        subTask2.setStartTime(LocalDateTime.of(2025, Month.AUGUST, 10, 15, 20));
-        taskManager.updateSubTask(subTask2);
+        SubTask subtaskUpdate =new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
+        subtaskUpdate.setId(subTask2.getId());
+        subtaskUpdate.setStartTime(LocalDateTime.of(2025, Month.AUGUST, 10, 15, 20));
+        taskManager.updateSubTask(subtaskUpdate);
         System.out.println(taskManager.getPrioritizedTasks());
 
 
         FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
+        System.out.println(restored.getPrioritizedTasks());
 
     }
 
