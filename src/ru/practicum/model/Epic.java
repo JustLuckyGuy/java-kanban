@@ -11,7 +11,6 @@ public class Epic extends Task {
     private LocalDateTime endTime;
 
 
-
     //Конструктор ru.practicum.model.Epic
     public Epic(String nameEpic, String description) {
         super(nameEpic, description);
@@ -75,11 +74,6 @@ public class Epic extends Task {
     public LocalDateTime getEndTime() {
         return endTime;
     }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
 
     public void updateDuration() {
         duration = subTasks.stream()
