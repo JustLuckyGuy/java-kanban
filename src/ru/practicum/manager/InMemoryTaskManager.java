@@ -108,7 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(subTask.getIdEpic());
         epic.addSubTask(subTask);
         epic.checkStatus();
-        epic.updateDuration();
+        epic.updateStartAndEndTime();
         if (subTask.getStartTime() != null) priorityTaskOfData.add(subTask);
 
         counterID++;
@@ -142,7 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
                     Epic epic1 = epics.get(subTask.getIdEpic());
                     epic1.updateSubTask(subTask);
                     epic1.checkStatus();
-                    epic1.updateDuration();
+                    epic1.updateStartAndEndTime();
                 });
 
     }
@@ -154,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
             removeSubFromEpicHistory(epic.getId());
             epic.getSubTask().clear();
             epic.checkStatus();
+            epic.updateStartAndEndTime();
         });
         subTasks.values().forEach(priorityTaskOfData::remove);
         subTasks.clear();
@@ -174,7 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.removeSubTask(subTasks.get(idSubTask));
         subTasks.remove(idSubTask);
         epic.checkStatus();
-        epic.updateDuration();
+        epic.updateStartAndEndTime();
     }
 
     //Метод, который выводит все Подзадачи из структуры
@@ -226,13 +227,13 @@ public class InMemoryTaskManager implements TaskManager {
     //Метод, который удаляет Эпик по его идентификатору
     @Override
     public void removeEpicById(int idEpic) {
-        epics.get(idEpic).getSubTask().forEach(priorityTaskOfData::remove);
 
         Optional.ofNullable(epics.get(idEpic))
                 .ifPresent(epic -> {
                     epic.getSubTask().stream()
                             .map(SubTask::getId)
                             .forEach(subTasks::remove);
+                    epic.getSubTask().forEach(priorityTaskOfData::remove);
                     removeSubFromEpicHistory(idEpic);
                     historyManager.removeHistoryById(idEpic);
                     epics.remove(idEpic);

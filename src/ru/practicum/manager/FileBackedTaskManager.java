@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -194,10 +193,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     currentMaxId = task.getId();
                 }
                 switch (task.getType()) {
-                    case TASK -> tasks.put(task.getId(), task);
+                    case TASK -> {
+                        tasks.put(task.getId(), task);
+                        if (task.getStartTime() != null) priorityTaskOfData.add(task);
+                    }
                     case EPIC -> epics.put(task.getId(), (Epic) task);
                     case SUBTASK -> {
                         subTasks.put(task.getId(), (SubTask) task);
+                        if (task.getStartTime() != null) priorityTaskOfData.add(task);
                         Epic epic = epics.get(((SubTask) task).getIdEpic());
                         epic.addSubTask((SubTask) task);
                     }
@@ -218,7 +221,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         manager.loadTasks(file);
-        manager.loadPrioritizeTasks();
         return manager;
 
     }
@@ -243,17 +245,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    //Метод, который выгрузит в TaskManager приоритетные задачи
-    private void loadPrioritizeTasks() {
-
-        tasks.values().stream()
-                .map(task -> task.getStartTime() != null ? task : null)
-                .filter(Objects::nonNull)
-                .forEach(priorityTaskOfData::add);
-        subTasks.values().stream()
-                .map(subTask -> subTask.getStartTime() != null ? subTask : null)
-                .filter(Objects::nonNull)
-                .forEach(priorityTaskOfData::add);
-    }
 
 }

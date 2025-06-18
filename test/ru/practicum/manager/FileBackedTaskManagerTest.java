@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
 
-class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     private File tempFile;
 
@@ -99,6 +99,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
         assertEquals(taskManager.getNameTask(), taskRestored.getNameTask(), "Имена задач должны совпадать");
         assertEquals(taskManager.getDescription(), taskRestored.getDescription(), "Описания задач должны совпадать");
         assertEquals(taskManager.getStatusTask(), taskRestored.getStatusTask(), "Статусы задач должны совпадать");
+        assertEquals(taskManager.getStartTime(), taskRestored.getStartTime(), "Время старта выполнения задачи должны совпадать");
+        assertEquals(taskManager.getEndTime(), taskRestored.getEndTime(), "Время окончания задачи должны совпадать");
+        assertEquals(taskManager.getDuration(), taskRestored.getDuration(), "Продолжительность задачи должны совпадать");
 
         Epic epicManager = manager.getEpicById(epic.getId());
         Epic epicRestored = restored.getEpicById(epic.getId());
@@ -108,6 +111,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
         assertEquals(epicManager.getDescription(), epicRestored.getDescription(), "Описания эпиков должны совпадать");
         assertEquals(epicManager.getStatusTask(), epicRestored.getStatusTask(), "Статусы эпиков должны совпадать");
         assertEquals(epicManager.getSubTask().size(), epicRestored.getSubTask().size(), "Размеры списков подзадач у эпиков должны совпадать");
+        assertEquals(epicManager.getStartTime(), epicRestored.getStartTime(), "Время старта выполнения задачи должны совпадать");
+        assertEquals(epicManager.getEndTime(), epicRestored.getEndTime(), "Время окончания задачи должны совпадать");
+        assertEquals(epicManager.getDuration(), epicRestored.getDuration(), "Продолжительность задачи должны совпадать");
 
         for (int i = 0; i < epicManager.getSubTask().size(); i++) {
             SubTask subTaskManager = epicManager.getSubTask().get(i);
@@ -118,6 +124,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
             assertEquals(subTaskManager.getDescription(), subTaskRestored.getDescription(), "Описания подзадач должны совпадать");
             assertEquals(subTaskManager.getStatusTask(), subTaskRestored.getStatusTask(), "Статусы подзадач должны совпадать");
             assertEquals(subTaskManager.getIdEpic(), subTaskRestored.getIdEpic(), "Подзадачи должны ссылаться на один и тот же эпик");
+            assertEquals(subTaskManager.getStartTime(), subTaskRestored.getStartTime(), "Время старта выполнения задачи должны совпадать");
+            assertEquals(subTaskManager.getEndTime(), subTaskRestored.getEndTime(), "Время окончания задачи должны совпадать");
+            assertEquals(subTaskManager.getDuration(), subTaskRestored.getDuration(), "Продолжительность задачи должны совпадать");
         }
 
     }
@@ -127,5 +136,12 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
     void shouldReturnExceptionWhenFileNonExists() {
         assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("dsadas.csv")));
     }
+
+    @Test
+    void shouldReturn5WhenPrioritizedListIsLoaded() {
+        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(tempFile);
+        assertEquals(5, taskManager.getPrioritizedTasks().size());
+    }
+
 
 }

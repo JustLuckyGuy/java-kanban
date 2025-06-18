@@ -20,24 +20,7 @@ public class Epic extends Task {
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask);
-
-        startTime = this.subTasks.stream()
-                .map(SubTask::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-
-        endTime = subTasks.stream()
-                .map(timeOfSubTask -> {
-                    if (timeOfSubTask.getStartTime() != null && timeOfSubTask.getDuration() != null) {
-                        return timeOfSubTask.getStartTime().plus(timeOfSubTask.getDuration());
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        updateStartAndEndTime();
     }
 
     //Создал геттер
@@ -63,6 +46,7 @@ public class Epic extends Task {
     public void updateSubTask(SubTask subTask) {
         subTasks.remove(subTask);
         subTasks.add(subTask);
+
     }
 
     //Метод для удаления Подзадачи из Эпика
@@ -75,12 +59,33 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public void updateDuration() {
+    private void updateDuration() {
         duration = subTasks.stream()
                 .map(SubTask::getDuration)
                 .filter(Objects::nonNull)
                 .reduce(Duration.ZERO, Duration::plus);
 
+    }
+
+    public void updateStartAndEndTime() {
+        startTime = this.subTasks.stream()
+                .map(SubTask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+
+        endTime = subTasks.stream()
+                .map(timeOfSubTask -> {
+                    if (timeOfSubTask.getStartTime() != null && timeOfSubTask.getDuration() != null) {
+                        return timeOfSubTask.getStartTime().plus(timeOfSubTask.getDuration());
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+        updateDuration();
     }
 
     @Override

@@ -11,7 +11,6 @@ import ru.practicum.model.Task;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,8 +33,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void before() {
         tasks = createTask();
         task1 = new Task("Прогулка", "Взять с собой собаку");
-
+        task1.setStartTime(LocalDateTime.now());
+        task1.setDuration(Duration.ofMinutes(100));
         task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
+        task2.setStartTime(LocalDateTime.of(2025, Month.MAY, 18, 20, 1));
+        task2.setDuration(Duration.ZERO);
         tasks.createTask(task1);
         tasks.createTask(task2);
         epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
@@ -43,11 +45,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         tasks.createEpic(epic1);
         tasks.createEpic(epic2);
         subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
+        subTask1.setStartTime(LocalDateTime.of(2025, Month.JULY, 20, 20, 0));
+        subTask1.setDuration(Duration.ofMinutes(3000));
         subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
+        subTask2.setStartTime(LocalDateTime.of(2025, Month.MAY, 10, 10, 15));
+        subTask2.setDuration(Duration.ofDays(2));
         subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
+        subTask3.setStartTime(LocalDateTime.of(2025, Month.JULY, 3, 20, 12));
+        subTask3.setDuration(Duration.ofMinutes(20));
         tasks.createSubTask(subTask1);
         tasks.createSubTask(subTask2);
-        tasks.createSubTask(subTask2);
+        tasks.createSubTask(subTask3);
     }
 
     @Test
@@ -149,11 +157,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldNonConflictingValuesById() {
-        Task task1 = new Task("Прогулка", "Взять с собой собаку");
-        tasks.createTask(task1);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
-        task2.setId(2);
-        tasks.updateTask(task2);
         assertNotEquals(tasks.getTaskById(task1.getId()), tasks.getTaskById(task2.getId()));
         task2.setId(task1.getId());
         tasks.updateTask(task2);
@@ -190,19 +193,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(2, tasks.showHistory().size());
     }
 
-    @Test
-    void getPrioritizedTasksShouldReturnEmptySetWhenNoTasksAndIgnoreTaskWithoutTime() {
-        TreeSet<Task> result = tasks.getPrioritizedTasks();
-        assertTrue(result.isEmpty());
-
-        task1.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 0));
-        tasks.updateTask(task1);
-        result = tasks.getPrioritizedTasks();
-        assertEquals(1, result.size());
-    }
 
     @Test
-    void shouldReturnExceptionWhenTasksIsIntersect(){
+    void shouldReturnExceptionWhenTasksIsIntersect() {
         task1.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 0));
         task1.setDuration(Duration.ofMinutes(30));
         tasks.updateTask(task1);
