@@ -2,31 +2,42 @@ package ru.practicum.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.model.Epic;
 import ru.practicum.model.StatusTask;
 import ru.practicum.model.SubTask;
 import ru.practicum.model.Task;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static ru.practicum.manager.Managers.getDefault;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 
-public class TaskManagerTest {
-    public TaskManager tasks;
-    Task task1;
-    Task task2;
-    Epic epic1;
-    Epic epic2;
-    SubTask subTask1;
-    SubTask subTask2;
-    SubTask subTask3;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
+public abstract class TaskManagerTest<T extends TaskManager> {
+    protected abstract T createTask();
+
+    protected T tasks;
+    protected Task task1;
+    protected Task task2;
+    protected Epic epic1;
+    protected Epic epic2;
+    protected SubTask subTask1;
+    protected SubTask subTask2;
+    protected SubTask subTask3;
 
 
     @BeforeEach
     void before() {
-        tasks = getDefault();
+        tasks = createTask();
         task1 = new Task("Прогулка", "Взять с собой собаку");
+        task1.setStartTime(LocalDateTime.now());
+        task1.setDuration(Duration.ofMinutes(100));
         task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
+        task2.setStartTime(LocalDateTime.of(2025, Month.MAY, 18, 20, 1));
+        task2.setDuration(Duration.ZERO);
         tasks.createTask(task1);
         tasks.createTask(task2);
         epic1 = new Epic("Очень большая и важная задача", "Дедлайн до завтра");
@@ -34,11 +45,17 @@ public class TaskManagerTest {
         tasks.createEpic(epic1);
         tasks.createEpic(epic2);
         subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
+        subTask1.setStartTime(LocalDateTime.of(2025, Month.JULY, 20, 20, 0));
+        subTask1.setDuration(Duration.ofMinutes(3000));
         subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
+        subTask2.setStartTime(LocalDateTime.of(2025, Month.MAY, 10, 10, 15));
+        subTask2.setDuration(Duration.ofDays(2));
         subTask3 = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic2.getId());
+        subTask3.setStartTime(LocalDateTime.of(2025, Month.JULY, 3, 20, 12));
+        subTask3.setDuration(Duration.ofMinutes(20));
         tasks.createSubTask(subTask1);
         tasks.createSubTask(subTask2);
-        tasks.createSubTask(subTask2);
+        tasks.createSubTask(subTask3);
     }
 
     @Test
@@ -140,11 +157,6 @@ public class TaskManagerTest {
 
     @Test
     void shouldNonConflictingValuesById() {
-        Task task1 = new Task("Прогулка", "Взять с собой собаку");
-        tasks.createTask(task1);
-        Task task2 = new Task("Посмотреть фильм", "Выбрать фильм с друзьями");
-        task2.setId(2);
-        tasks.updateTask(task2);
         assertNotEquals(tasks.getTaskById(task1.getId()), tasks.getTaskById(task2.getId()));
         task2.setId(task1.getId());
         tasks.updateTask(task2);
@@ -179,5 +191,19 @@ public class TaskManagerTest {
 
         tasks.removeTaskById(1);
         assertEquals(2, tasks.showHistory().size());
+    }
+
+
+    @Test
+    void shouldReturnExceptionWhenTasksIsIntersect() {
+        task1.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 0));
+        task1.setDuration(Duration.ofMinutes(30));
+        tasks.updateTask(task1);
+        Task tempTask = new Task("A", "B");
+        tempTask.setStartTime(LocalDateTime.of(2025, Month.MAY, 12, 10, 10));
+        tempTask.setDuration(Duration.ofMinutes(10));
+
+        assertThrows(ManagerIsIntersectException.class, () -> tasks.createTask(tempTask));
+
     }
 }

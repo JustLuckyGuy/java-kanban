@@ -1,5 +1,7 @@
 package ru.practicum.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -7,6 +9,8 @@ public class Task {
     protected String description;
     protected StatusTask statusTask;
     protected int id;
+    protected Duration duration = Duration.ZERO;
+    protected LocalDateTime startTime;
 
     //Конструктор Task
     public Task(String nameTask, String description, StatusTask statusTask) {
@@ -54,6 +58,30 @@ public class Task {
     public TaskType getType() {
         return TaskType.TASK;
     }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
 
     //Переопределил методы equals и hashcode
     @Override

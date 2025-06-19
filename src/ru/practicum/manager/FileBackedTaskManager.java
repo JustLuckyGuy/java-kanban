@@ -7,11 +7,15 @@ import ru.practicum.model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
     private static final String BOM = "\uFEFF";
-    private static final String HEADER = "id,type,name,status,description,epic";
+    private static final String HEADER = "id,type,name,status,description,dateStart,duration,epic,";
     private final File workedFile;
 
 
@@ -133,24 +137,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String taskName = taskFields[2];
         StatusTask statusTask = StatusTask.valueOf(taskFields[3]);
         String taskDescription = taskFields[4];
+        LocalDateTime startTime = !taskFields[5].isBlank() ? LocalDateTime.parse(taskFields[5], formatter) : null;
+        Duration duration = !taskFields[6].isBlank() ? Duration.ofMinutes(Long.parseLong(taskFields[6])) : null;
 
         switch (taskType) {
             case TASK -> {
                 Task task = new Task(taskName, taskDescription, statusTask);
                 task.setId(idTask);
+                task.setStartTime(startTime);
+                task.setDuration(duration);
                 return task;
             }
             case EPIC -> {
                 Epic epic = new Epic(taskName, taskDescription);
                 epic.setStatusTask(statusTask);
                 epic.setId(idTask);
+                epic.setStartTime(startTime);
+                epic.setDuration(duration);
                 return epic;
             }
             case SUBTASK -> {
-                int idEpic = Integer.parseInt(taskFields[5]);
+                int idEpic = Integer.parseInt(taskFields[7]);
                 SubTask subTask = new SubTask(taskName, taskDescription, idEpic);
                 subTask.setStatusTask(statusTask);
                 subTask.setId(idTask);
+                subTask.setStartTime(startTime);
+                subTask.setDuration(duration);
                 return subTask;
             }
         }
@@ -174,7 +186,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 Task task = fromStringToTask(line);
 
-
                 if (task == null) {
                     throw new ManagerLoadException("Не найдена задача");
                 }
@@ -182,10 +193,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     currentMaxId = task.getId();
                 }
                 switch (task.getType()) {
-                    case TASK -> tasks.put(task.getId(), task);
+                    case TASK -> {
+                        tasks.put(task.getId(), task);
+                        if (task.getStartTime() != null) priorityTaskOfData.add(task);
+                    }
                     case EPIC -> epics.put(task.getId(), (Epic) task);
                     case SUBTASK -> {
                         subTasks.put(task.getId(), (SubTask) task);
+                        if (task.getStartTime() != null) priorityTaskOfData.add(task);
                         Epic epic = epics.get(((SubTask) task).getIdEpic());
                         epic.addSubTask((SubTask) task);
                     }
@@ -195,16 +210,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (FileNotFoundException e) {
             throw new ManagerLoadException("Файл не найден" + e.getMessage());
         } catch (IOException e) {
-            throw new ManagerLoadException("Произошла ошибка при чтении файла" + e.getMessage());
+            throw new ManagerLoadException("Произошла ошибка при чтении файла " + e.getMessage());
         } catch (Exception e) {
-            throw new ManagerLoadException("Произошла ошибка с чтением задачи" + e.getMessage());
+            throw new ManagerLoadException("Произошла ошибка с чтением задачи " + e.getMessage());
         }
 
     }
 
     //Метод, который позволит выгружать задачи из файла при создании объекта FileBackedManager
     public static FileBackedTaskManager loadFromFile(File file) {
-
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         manager.loadTasks(file);
         return manager;
@@ -219,9 +233,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         if (taskType == TaskType.SUBTASK) idOfEpicInSubtask = String.valueOf(((SubTask) task).getIdEpic());
 
-        return String.format("%d,%s,%s,%s,%s,%s\n", task.getId(), taskType, task.getNameTask(),
-                task.getStatusTask(), task.getDescription(), idOfEpicInSubtask);
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s\n",
+                task.getId(),
+                taskType,
+                task.getNameTask(),
+                task.getStatusTask(),
+                task.getDescription(),
+                task.getStartTime() != null ? task.getStartTime().format(formatter) : "",
+                task.getDuration() != null ? task.getDuration().toMinutes() : "",
+                idOfEpicInSubtask);
 
     }
+
 
 }

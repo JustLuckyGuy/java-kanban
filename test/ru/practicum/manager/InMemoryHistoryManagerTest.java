@@ -11,11 +11,12 @@ import java.util.List;
 
 
 class InMemoryHistoryManagerTest {
-    public HistoryManager tasksHistory = getDefaultHistory();
+    protected HistoryManager tasksHistory = getDefaultHistory();
     Task task1;
     Task task2;
     Epic epic1;
     Epic epic2;
+
 
     @BeforeEach
     void before() {

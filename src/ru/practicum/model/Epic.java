@@ -1,10 +1,15 @@
 package ru.practicum.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task {
     //Поле, которое будет содержать наши подзадачи
     private final ArrayList<SubTask> subTasks;
+    private LocalDateTime endTime;
+
 
     //Конструктор ru.practicum.model.Epic
     public Epic(String nameEpic, String description) {
@@ -15,6 +20,7 @@ public class Epic extends Task {
     //Создал метод, для добавления в Список наши подзадачи
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask);
+        updateStartAndEndTime();
     }
 
     //Создал геттер
@@ -25,19 +31,11 @@ public class Epic extends Task {
     //Метод, который будет проверять статус Эпика
     public void checkStatus() {
 
-        int counterOfNew = 0;
-        int counterOfDone = 0;
-        for (SubTask s : subTasks) {
-            if (s.getStatusTask() == StatusTask.NEW) {
-                counterOfNew++;
-            } else if (s.getStatusTask() == StatusTask.DONE) {
-                counterOfDone++;
-            }
-        }
-
-        if (counterOfNew == subTasks.size()) {
+        if (subTasks.stream().filter(subTask -> subTask.getStatusTask() == StatusTask.NEW)
+                .count() == subTasks.size()) {
             this.setStatusTask(StatusTask.NEW);
-        } else if (counterOfDone == subTasks.size()) {
+        } else if (subTasks.stream().filter(subTask -> subTask.getStatusTask() == StatusTask.DONE)
+                .count() == subTasks.size()) {
             this.setStatusTask(StatusTask.DONE);
         } else {
             this.setStatusTask(StatusTask.IN_PROGRESS);
@@ -48,11 +46,42 @@ public class Epic extends Task {
     public void updateSubTask(SubTask subTask) {
         subTasks.remove(subTask);
         subTasks.add(subTask);
+
     }
 
     //Метод для удаления Подзадачи из Эпика
     public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void updateStartAndEndTime() {
+        startTime = this.subTasks.stream()
+                .map(SubTask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+
+        endTime = subTasks.stream()
+                .map(timeOfSubTask -> {
+                    if (timeOfSubTask.getStartTime() != null && timeOfSubTask.getDuration() != null) {
+                        return timeOfSubTask.getStartTime().plus(timeOfSubTask.getDuration());
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
+        duration = subTasks.stream()
+                .map(SubTask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
     }
 
     @Override
@@ -64,9 +93,7 @@ public class Epic extends Task {
     public String toString() {
         StringBuilder result = new StringBuilder("Эпик № " + id + "\nНазвание эпика: " + nameTask +
                 "\nОписание: " + description + "\n");
-        for (SubTask subTask : subTasks) {
-            result.append(subTask);
-        }
+        subTasks.forEach(result::append);
         return result + "Статус Эпика: " + statusTask + "\n";
     }
 
