@@ -103,16 +103,13 @@ public class InMemoryTaskManager implements TaskManager {
                 .ifPresent(savedSubTask -> {
                     subTask.setId(counterID);
                     subTasks.put(subTask.getId(), subTask);
+                    Epic epic = epics.get(subTask.getIdEpic());
+                    epic.addSubTask(subTask);
+                    epic.checkStatus();
+                    epic.updateStartAndEndTime();
+                    if (subTask.getStartTime() != null) priorityTaskOfData.add(subTask);
+                    counterID++;
                 });
-
-        Epic epic = epics.get(subTask.getIdEpic());
-        epic.addSubTask(subTask);
-        epic.checkStatus();
-        epic.updateStartAndEndTime();
-        if (subTask.getStartTime() != null) priorityTaskOfData.add(subTask);
-
-        counterID++;
-
     }
 
     //Метод, который возвращает Подзадачу по его идентификатору.
@@ -167,15 +164,13 @@ public class InMemoryTaskManager implements TaskManager {
         Optional.ofNullable(subTasks.get(idSubTask))
                 .ifPresent(subTask -> {
                     priorityTaskOfData.remove(subTask);
-                    historyManager.removeHistoryById(idSubTask)
-                    ;
+                    historyManager.removeHistoryById(idSubTask);
+                    Epic epic = epics.get(subTasks.get(idSubTask).getIdEpic());
+                    epic.removeSubTask(subTasks.get(idSubTask));
+                    subTasks.remove(idSubTask);
+                    epic.checkStatus();
+                    epic.updateStartAndEndTime();
                 });
-
-        Epic epic = epics.get(subTasks.get(idSubTask).getIdEpic());
-        epic.removeSubTask(subTasks.get(idSubTask));
-        subTasks.remove(idSubTask);
-        epic.checkStatus();
-        epic.updateStartAndEndTime();
     }
 
     //Метод, который выводит все Подзадачи из структуры

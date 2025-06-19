@@ -59,14 +59,6 @@ public class Epic extends Task {
         return endTime;
     }
 
-    private void updateDuration() {
-        duration = subTasks.stream()
-                .map(SubTask::getDuration)
-                .filter(Objects::nonNull)
-                .reduce(Duration.ZERO, Duration::plus);
-
-    }
-
     public void updateStartAndEndTime() {
         startTime = this.subTasks.stream()
                 .map(SubTask::getStartTime)
@@ -85,7 +77,11 @@ public class Epic extends Task {
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
-        updateDuration();
+
+        duration = subTasks.stream()
+                .map(SubTask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
     }
 
     @Override
