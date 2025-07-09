@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateAdapter extends TypeAdapter<LocalDateTime>{
+public class LocalDateAdapter extends TypeAdapter<LocalDateTime> {
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     @Override
@@ -22,7 +22,7 @@ public class LocalDateAdapter extends TypeAdapter<LocalDateTime>{
 
     @Override
     public LocalDateTime read(JsonReader jsonReader) throws IOException {
-        if(jsonReader.peek().name().equals("NULL")){
+        if (jsonReader.peek().name().equals("NULL")) {
             jsonReader.nextNull();
             return null;
         }
