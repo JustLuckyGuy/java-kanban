@@ -11,17 +11,17 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
 
-    public HistoryHandler(TaskManager tasks, Gson gson){
+    public HistoryHandler(TaskManager tasks, Gson gson) {
         this.taskManager = tasks;
         this.gson = gson;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if(exchange.getRequestMethod().equals("GET")){
+        if (exchange.getRequestMethod().equals("GET")) {
             sendText(exchange, gson.toJson(taskManager.showHistory()), 200);
         } else {
-            sendText(exchange, "Bad request", 400);
+            sendNotFound(exchange);
         }
     }
 }

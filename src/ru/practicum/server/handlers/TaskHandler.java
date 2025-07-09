@@ -17,7 +17,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
 
-    public TaskHandler(TaskManager tasks, Gson gson){
+    public TaskHandler(TaskManager tasks, Gson gson) {
         this.taskManager = tasks;
         this.gson = gson;
     }
@@ -35,9 +35,8 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                 case DELETE_TASK -> handleDeleteTask(exchange);
                 default -> sendNotFound(exchange);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            sendText(exchange, "Internal server error: " + e.getMessage(), 500);
+        } catch (Exception e) {
+            sendHasInteractions(exchange);
         }
     }
 
@@ -65,8 +64,8 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             } else {
                 taskManager.updateTask(task);
             }
-            sendText(exchange, "Задача добавилась или обновилась", 201);
-        } catch (ManagerIsIntersectException e){
+            sendText(exchange, "Task is added or updated successfully", 201);
+        } catch (ManagerIsIntersectException e) {
             sendHasInteractions(exchange);
         }
     }
@@ -77,7 +76,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             sendText(exchange, "Invalid post ID", 400);
         } else {
             taskManager.removeTaskById(id.get());
-            sendText(exchange, "Задача удалена", 200);
+            sendText(exchange, "Task is deleted successfully", 200);
         }
     }
 
@@ -93,7 +92,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                 }
             }
             case "POST" -> {
-                if(path.length == 2 && path[1].equals("tasks")) {
+                if (path.length == 2 && path[1].equals("tasks")) {
                     return Endpoints.POST_TASK;
                 }
 

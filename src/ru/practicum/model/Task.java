@@ -23,6 +23,9 @@ public class Task {
         this(nameTask, description, StatusTask.NEW);
     }
 
+    public Task() {
+    }
+
     public int getId() {
         return id;
     }

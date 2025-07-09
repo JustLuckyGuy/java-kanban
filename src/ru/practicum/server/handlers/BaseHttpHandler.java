@@ -34,15 +34,12 @@ public class BaseHttpHandler {
     protected Optional<Integer> getTaskId(HttpExchange exchange) {
         String[] pathParts = exchange.getRequestURI().getPath().split("/");
         try {
-            if(Integer.parseInt(pathParts[2]) < 0) throw new NumberFormatException();
+            if (Integer.parseInt(pathParts[2]) < 0) throw new NumberFormatException();
             return Optional.of(Integer.parseInt(pathParts[2]));
         } catch (NumberFormatException exception) {
             return Optional.empty();
         }
     }
-
-
-
 
 
 }

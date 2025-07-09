@@ -16,7 +16,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
 
-    public SubtaskHandler(TaskManager tasks, Gson gson){
+    public SubtaskHandler(TaskManager tasks, Gson gson) {
         this.taskManager = tasks;
         this.gson = gson;
     }
@@ -33,9 +33,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 case DELETE_SUBTASK -> handleDeleteSubtask(exchange);
                 default -> sendNotFound(exchange);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            sendText(exchange, "Internal server error: " + e.getMessage(), 500);
+        } catch (Exception e) {
+            sendHasInteractions(exchange);
         }
     }
 
@@ -58,7 +57,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         SubTask task = gson.fromJson(body, SubTask.class);
         try {
-            if(task.getIdEpic() == null || taskManager.getEpicById(task.getIdEpic()) == null){
+            if (task.getIdEpic() == null || taskManager.getEpicById(task.getIdEpic()) == null) {
                 sendText(exchange, "Subtask cannot exist without an Epic", 400);
             }
             if (taskManager.getSubTaskById(task.getId()) == null) {
@@ -66,8 +65,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             } else {
                 taskManager.updateSubTask(task);
             }
-            sendText(exchange, "Задача добавилась или обновилась", 201);
-        } catch (ManagerIsIntersectException e){
+            sendText(exchange, "Subtask is added or updated successfully", 201);
+        } catch (ManagerIsIntersectException e) {
             sendHasInteractions(exchange);
         }
     }
@@ -78,7 +77,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             sendText(exchange, "Invalid post ID", 400);
         } else {
             taskManager.removeSubTaskById(id.get());
-            sendText(exchange, "Задача удалена", 200);
+            sendText(exchange, "Subtask is deleted successfully", 200);
         }
     }
 
@@ -89,12 +88,12 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             case "GET" -> {
                 if (path.length == 2 && path[1].equals("subtasks")) {
                     return Endpoints.GET_SUBTASK;
-                } else if (path.length == 3 && path[1].equals("tasks")) {
+                } else if (path.length == 3 && path[1].equals("subtasks")) {
                     return Endpoints.GET_SUBTASK_ID;
                 }
             }
             case "POST" -> {
-                if(path.length == 2 && path[1].equals("tasks")) {
+                if (path.length == 2 && path[1].equals("subtasks")) {
                     return Endpoints.POST_SUBTASK;
                 }
 

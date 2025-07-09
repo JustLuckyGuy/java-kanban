@@ -7,14 +7,17 @@ import java.util.Objects;
 
 public class Epic extends Task {
     //Поле, которое будет содержать наши подзадачи
-    private final ArrayList<SubTask> subTasks;
+    private ArrayList<SubTask> subTasks = new ArrayList<>();
     private LocalDateTime endTime;
 
+    public Epic() {
+        this.subTasks = new ArrayList<>();
+    }
 
     //Конструктор ru.practicum.model.Epic
     public Epic(String nameEpic, String description) {
         super(nameEpic, description);
-        this.subTasks = new ArrayList<>();
+
     }
 
     //Создал метод, для добавления в Список наши подзадачи

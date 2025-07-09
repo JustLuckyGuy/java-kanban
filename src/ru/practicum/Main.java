@@ -8,8 +8,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static ru.practicum.manager.FileBackedTaskManager.loadFromFile;
-
 
 public class Main {
 
@@ -29,7 +27,7 @@ public class Main {
         Epic epic2 = new Epic("Менее большая задача", "Дедлайн сегодня");
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
-        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", epic1.getId());
+        SubTask subTask1 = new SubTask("Разработать план", "Подумать над планом", 15);
         subTask1.setStartTime(LocalDateTime.of(2025, Month.JULY, 20, 20, 0));
         subTask1.setDuration(Duration.ofMinutes(3000));
         SubTask subTask2 = new SubTask("Проконсультироваться с коллективом", "Поговорить с коллективом о плане", epic1.getId());
@@ -42,22 +40,24 @@ public class Main {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        System.out.println(taskManager.getEpicById(3).getStartTime());
-        System.out.println(taskManager.getEpicById(3).getEndTime());
-        System.out.println(taskManager.getEpicById(3).getDuration());
-        taskManager.removeSubTaskById(5);
-        SubTask subtaskUpdate = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic1.getId());
-        subtaskUpdate.setId(subTask2.getId());
-        subtaskUpdate.setStartTime(LocalDateTime.of(2025, Month.AUGUST, 10, 15, 20));
-        subtaskUpdate.setDuration(Duration.ofMinutes(5000));
-        taskManager.updateSubTask(subtaskUpdate);
-        System.out.println(taskManager.getEpicById(3).getStartTime());
-        System.out.println(taskManager.getEpicById(3).getEndTime());
-        System.out.println(taskManager.getEpicById(3).getDuration());
+        System.out.println(taskManager.getSubTaskById(19));
+
+//        System.out.println(taskManager.getEpicById(3).getStartTime());
+//        System.out.println(taskManager.getEpicById(3).getEndTime());
+//        System.out.println(taskManager.getEpicById(3).getDuration());
+//        taskManager.removeSubTaskById(5);
+//        SubTask subtaskUpdate = new SubTask("Проверит свою работу на ошибки", "Проверить ошибки своей работы", epic1.getId());
+//        subtaskUpdate.setId(subTask2.getId());
+//        subtaskUpdate.setStartTime(LocalDateTime.of(2025, Month.AUGUST, 10, 15, 20));
+//        subtaskUpdate.setDuration(Duration.ofMinutes(5000));
+//        taskManager.updateSubTask(subtaskUpdate);
+//        System.out.println(taskManager.getEpicById(3).getStartTime());
+//        System.out.println(taskManager.getEpicById(3).getEndTime());
+//        System.out.println(taskManager.getEpicById(3).getDuration());
 
 
-        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
-        System.out.println(restored.getPrioritizedTasks());
+//        FileBackedTaskManager restored = loadFromFile(new File("YandexPracticum7.csv"));
+//        System.out.println(restored.getPrioritizedTasks());
 
     }
 
