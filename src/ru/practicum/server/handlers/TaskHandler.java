@@ -2,7 +2,6 @@ package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Task;
@@ -13,13 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
+public class TaskHandler extends BaseHttpHandler {
 
     public TaskHandler(TaskManager tasks, Gson gson) {
-        this.taskManager = tasks;
-        this.gson = gson;
+        super(tasks, gson);
     }
 
 
@@ -29,10 +25,10 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             Endpoints endpoints = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
             switch (endpoints) {
-                case GET_TASK -> handleGetTask(exchange);
-                case GET_TASK_ID -> handleGetTaskByID(exchange);
-                case POST_TASK -> handlePostTask(exchange);
-                case DELETE_TASK -> handleDeleteTask(exchange);
+                case GET -> handleGetTask(exchange);
+                case GET_ID -> handleGetTaskByID(exchange);
+                case POST -> handlePostTask(exchange);
+                case DELETE -> handleDeleteTask(exchange);
                 default -> sendNotFound(exchange);
             }
         } catch (Exception e) {
@@ -57,6 +53,10 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
     private void handlePostTask(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        if (body.isBlank()) {
+            sendText(exchange, "An empty request body was received", 400);
+        }
+
         Task task = gson.fromJson(body, Task.class);
         try {
             if (taskManager.getTaskById(task.getId()) == null) {
@@ -86,19 +86,19 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
         switch (requestMethod) {
             case "GET" -> {
                 if (path.length == 2 && path[1].equals("tasks")) {
-                    return Endpoints.GET_TASK;
+                    return Endpoints.GET;
                 } else if (path.length == 3 && path[1].equals("tasks")) {
-                    return Endpoints.GET_TASK_ID;
+                    return Endpoints.GET_ID;
                 }
             }
             case "POST" -> {
                 if (path.length == 2 && path[1].equals("tasks")) {
-                    return Endpoints.POST_TASK;
+                    return Endpoints.POST;
                 }
 
             }
             case "DELETE" -> {
-                return Endpoints.DELETE_TASK;
+                return Endpoints.DELETE;
             }
         }
         return Endpoints.UNKNOWN;

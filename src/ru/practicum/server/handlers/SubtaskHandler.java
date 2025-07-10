@@ -2,7 +2,6 @@ package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.SubTask;
@@ -12,13 +11,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
+public class SubtaskHandler extends BaseHttpHandler {
+
 
     public SubtaskHandler(TaskManager tasks, Gson gson) {
-        this.taskManager = tasks;
-        this.gson = gson;
+        super(tasks, gson);
     }
 
     @Override
@@ -27,10 +24,10 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
             Endpoints endpoints = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
             switch (endpoints) {
-                case GET_SUBTASK -> handleGetSubtask(exchange);
-                case GET_SUBTASK_ID -> handleGetSubtaskByID(exchange);
-                case POST_SUBTASK -> handlePostSubtask(exchange);
-                case DELETE_SUBTASK -> handleDeleteSubtask(exchange);
+                case GET -> handleGetSubtask(exchange);
+                case GET_ID -> handleGetSubtaskByID(exchange);
+                case POST -> handlePostSubtask(exchange);
+                case DELETE -> handleDeleteSubtask(exchange);
                 default -> sendNotFound(exchange);
             }
         } catch (Exception e) {
@@ -55,6 +52,10 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
 
     private void handlePostSubtask(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        if (body.isBlank()) {
+            sendText(exchange, "An empty request body was received", 400);
+        }
+
         SubTask task = gson.fromJson(body, SubTask.class);
         try {
             if (task.getIdEpic() == null || taskManager.getEpicById(task.getIdEpic()) == null) {
@@ -87,19 +88,19 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         switch (requestMethod) {
             case "GET" -> {
                 if (path.length == 2 && path[1].equals("subtasks")) {
-                    return Endpoints.GET_SUBTASK;
+                    return Endpoints.GET;
                 } else if (path.length == 3 && path[1].equals("subtasks")) {
-                    return Endpoints.GET_SUBTASK_ID;
+                    return Endpoints.GET_ID;
                 }
             }
             case "POST" -> {
                 if (path.length == 2 && path[1].equals("subtasks")) {
-                    return Endpoints.POST_SUBTASK;
+                    return Endpoints.POST;
                 }
 
             }
             case "DELETE" -> {
-                return Endpoints.DELETE_SUBTASK;
+                return Endpoints.DELETE;
             }
         }
         return Endpoints.UNKNOWN;

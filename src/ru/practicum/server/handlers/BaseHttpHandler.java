@@ -1,7 +1,10 @@
 package ru.practicum.server.handlers;
 
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import ru.practicum.manager.TaskManager;
 
 
 import java.io.IOException;
@@ -9,7 +12,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class BaseHttpHandler {
+public abstract class BaseHttpHandler implements HttpHandler {
+
+    protected final TaskManager taskManager;
+    protected final Gson gson;
+
+    public BaseHttpHandler(TaskManager tasks, Gson gson) {
+        this.taskManager = tasks;
+        this.gson = gson;
+    }
 
     protected void sendText(HttpExchange exchange, String responseString, int responseCode) throws IOException {
         byte[] resp = responseString.getBytes(StandardCharsets.UTF_8);

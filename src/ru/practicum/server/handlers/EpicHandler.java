@@ -2,7 +2,6 @@ package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.exeptions.ManagerIsIntersectException;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
@@ -12,13 +11,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class EpicHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
+public class EpicHandler extends BaseHttpHandler {
 
     public EpicHandler(TaskManager tasks, Gson gson) {
-        this.taskManager = tasks;
-        this.gson = gson;
+        super(tasks, gson);
     }
 
 
@@ -28,10 +24,11 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             Endpoints endpoints = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
             switch (endpoints) {
-                case GET_EPIC -> handleGetEpic(exchange);
-                case GET_EPIC_ID -> handleGetEpicByID(exchange);
-                case POST_EPIC -> handlePostEpic(exchange);
-                case DELETE_EPIC -> handleDeleteEpic(exchange);
+                case GET -> handleGetEpic(exchange);
+                case GET_ID -> handleGetEpicByID(exchange);
+                case POST -> handlePostEpic(exchange);
+                case DELETE -> handleDeleteEpic(exchange);
+                case GET_LIST_SUBTASKS -> handleGetSubtasksInEpics(exchange);
                 default -> sendNotFound(exchange);
             }
         } catch (Exception e) {
@@ -54,16 +51,30 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
+    private void handleGetSubtasksInEpics(HttpExchange exchange) throws IOException {
+        Optional<Integer> id = getTaskId(exchange);
+        if (id.isEmpty()) {
+            sendText(exchange, "Invalid post ID", 400);
+        } else if (taskManager.getEpicById(id.get()) == null) {
+            sendNotFound(exchange);
+        } else {
+            sendText(exchange, gson.toJson(taskManager.getEpicById(id.get()).getSubTask()), 200);
+        }
+    }
+
+
     private void handlePostEpic(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        if (body.isBlank()) {
+            sendText(exchange, "An empty request body was received", 400);
+        }
         Epic task = gson.fromJson(body, Epic.class);
 
         try {
-            if (taskManager.getEpicById(task.getId()) == null) {
-                taskManager.createEpic(task);
-
+            if (taskManager.getTaskById(task.getId()) != null) {
+                sendText(exchange, "Epic already exist", 400);
             } else {
-                taskManager.updateEpic(task);
+                taskManager.createEpic(task);
             }
             sendText(exchange, "Epic is added or updated successfully", 201);
         } catch (ManagerIsIntersectException e) {
@@ -87,19 +98,21 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         switch (requestMethod) {
             case "GET" -> {
                 if (path.length == 2 && path[1].equals("epics")) {
-                    return Endpoints.GET_EPIC;
+                    return Endpoints.GET;
                 } else if (path.length == 3 && path[1].equals("epics")) {
-                    return Endpoints.GET_EPIC_ID;
+                    return Endpoints.GET_ID;
+                } else if (path.length == 4 && path[3].equals("subtasks")) {
+                    return Endpoints.GET_LIST_SUBTASKS;
                 }
             }
             case "POST" -> {
                 if (path.length == 2 && path[1].equals("epics")) {
-                    return Endpoints.POST_EPIC;
+                    return Endpoints.POST;
                 }
 
             }
             case "DELETE" -> {
-                return Endpoints.DELETE_EPIC;
+                return Endpoints.DELETE;
             }
         }
         return Endpoints.UNKNOWN;

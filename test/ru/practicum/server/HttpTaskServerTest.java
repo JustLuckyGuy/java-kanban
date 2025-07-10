@@ -233,4 +233,56 @@ public class HttpTaskServerTest {
         assertEquals(400, response.statusCode());
     }
 
+    @Test
+    void shouldReturn2WhenListOfSubtasksIsReturn() throws IOException, InterruptedException {
+        Epic epic = new Epic("Это Эпик", "Это описание Эпика");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/epics"))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(epic)))
+                .header("Content-Type", "application/json")
+                .build();
+
+        HttpResponse<String> responseEpic = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, responseEpic.statusCode());
+
+        SubTask subTask = new SubTask("Это Подзадача", "А это описание", 2);
+        subTask.setStartTime(LocalDateTime.of(2025, Month.MAY, 11, 10, 15));
+        subTask.setDuration(Duration.ofMinutes(100));
+
+        request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/subtasks"))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(subTask)))
+                .build();
+
+        HttpResponse<String> responseSubtask = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, responseSubtask.statusCode());
+
+        SubTask subTask2 = new SubTask("Это Подзадача #2", "А это описание", 2);
+
+
+        request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/subtasks"))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(subTask2)))
+                .build();
+
+        responseSubtask = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, responseSubtask.statusCode());
+
+        request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/epics/2/subtasks"))
+                .GET()
+                .build();
+
+        responseSubtask = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Type listTask = new TypeToken<List<SubTask>>() {
+        }.getType();
+        List<SubTask> subTasks = gson.fromJson(responseSubtask.body(), listTask);
+
+        assertEquals(2, subTasks.size());
+        assertEquals("Это Подзадача #2", subTasks.get(1).getNameTask());
+
+
+    }
+
 }

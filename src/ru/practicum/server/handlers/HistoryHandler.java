@@ -8,12 +8,9 @@ import ru.practicum.manager.TaskManager;
 import java.io.IOException;
 
 public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
 
     public HistoryHandler(TaskManager tasks, Gson gson) {
-        this.taskManager = tasks;
-        this.gson = gson;
+        super(tasks, gson);
     }
 
     @Override
