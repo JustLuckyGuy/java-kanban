@@ -120,6 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subTasks.get(idSubTask);
     }
 
+
     //Метод, который обновляет Подзадачу
     @Override
     public void updateSubTask(SubTask subTask) {
@@ -226,6 +227,7 @@ public class InMemoryTaskManager implements TaskManager {
         Optional.ofNullable(epics.get(idEpic))
                 .ifPresent(epic -> {
                     epic.getSubTask().stream()
+                            .filter(Objects::nonNull)
                             .map(SubTask::getId)
                             .forEach(subTasks::remove);
                     epic.getSubTask().forEach(priorityTaskOfData::remove);

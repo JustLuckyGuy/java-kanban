@@ -2,7 +2,7 @@ package ru.practicum.model;
 
 public class SubTask extends Task {
     //Поле для связывания с классом ru.practicum.model.Epic
-    private final int idEpic;
+    private final Integer idEpic;
 
     //Конструктор ru.practicum.model.SubTask
     public SubTask(String nameSubTask, String description, int idEpic) {
@@ -11,7 +11,7 @@ public class SubTask extends Task {
     }
 
     //Создал геттер
-    public int getIdEpic() {
+    public Integer getIdEpic() {
         return idEpic;
     }
 
